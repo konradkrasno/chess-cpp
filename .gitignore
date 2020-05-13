@@ -1,0 +1,7 @@
+.vs
+ChessBoard.sln
+Debug/*
+ChessBoard/Debug/*
+ChessBoard/ChessBoard.vcxproj
+ChessBoard/ChessBoard.vcxproj.filters
+ChessBoard/ChessBoard.vcxproj.user
