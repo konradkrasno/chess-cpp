@@ -20,6 +20,7 @@ struct BoardFixture
             }
         }
         boardState.at("b2") = ChessMan(ChessManType::Rook, 'w');
+        boardState.at("g5") = ChessMan(ChessManType::Rook, 'w');
         boardState.at("e2") = ChessMan(ChessManType::Knight, 'w');
         boardState.at("d2") = ChessMan(ChessManType::Bishop, 'w');
         boardState.at("d1") = ChessMan(ChessManType::Queen, 'w');
@@ -126,9 +127,45 @@ BOOST_AUTO_TEST_SUITE_END();
 BOOST_AUTO_TEST_SUITE(BoardSuite)
 BOOST_FIXTURE_TEST_CASE(testCalculateStateBoardAndReactionBoard, BoardFixture)
 {
-    // TODO finih this test and write code to do it
-    Board board;
-    board.CalculateMovesBoardAndReactionBoard(*moves, *reactions);
+    string testPosition1("b2");
+    string testPosition2("g5");
 
+    Board board;
+    board.CalculateMovesBoardAndReactionBoard(*state, *moves, *reactions);
+
+    std::map<string, std::list<string>> moves(*moves);
+    std::list<string> possibleMovesFromPosition1(moves.at(testPosition1));
+    std::list<string>::iterator it;
+
+    cout << "moves: " << endl;
+    for (it = possibleMovesFromPosition1.begin(); it != possibleMovesFromPosition1.end(); ++it) cout << *it << endl;
+
+    std::list<string> expectedMovesFromPosition1({ "c2", "a2", "b1", "b3", "b4", "b5", "b6" });
+
+    std::list<string> possibleMovesFromPosition2(moves.at(testPosition2));
+
+    cout << "moves: " << endl;
+    for (it = possibleMovesFromPosition2.begin(); it != possibleMovesFromPosition2.end(); ++it) cout << *it << endl;
+
+    std::list<string> expectedMovesFromPosition2({ "h5", "f5", "e5", "g6", "g7", "g8" });
+
+    BOOST_CHECK(possibleMovesFromPosition1 == expectedMovesFromPosition1);
+    BOOST_CHECK(possibleMovesFromPosition2 == expectedMovesFromPosition2);
+
+    std::map<string, std::list<ChessMan>> reactions(*reactions);
+    std::list<ChessMan> fields1;
+    fields1 = reactions.at("c2");
+    std::list<ChessMan>::iterator itr = fields1.begin();
+    ChessMan insertedChessMan1(*itr);
+    ChessMan expectedChessMan1(ChessManType::Rook, 'w');
+
+    std::list<ChessMan> fields2;
+    fields2 = reactions.at("g7");
+    itr = fields2.begin();
+    ChessMan insertedChessMan2(*itr);
+    ChessMan expectedChessMan2(ChessManType::Rook, 'w');
+
+    BOOST_CHECK(insertedChessMan1 == expectedChessMan1);
+    BOOST_CHECK(insertedChessMan2 == expectedChessMan2);
 }
 BOOST_AUTO_TEST_SUITE_END()

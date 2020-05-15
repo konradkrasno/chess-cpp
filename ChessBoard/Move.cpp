@@ -9,10 +9,10 @@ Move::~Move()
 }
 
 bool Move::_LookForPossibleMove(
-    string actual_position,
+    string const actual_position,
     std::map<string, std::list<string>>& movesBoard,
     std::map<string, ChessMan> const boardState,
-    string position,
+    string const position,
     ChessMan const movedChessMan
 )
 {
@@ -34,7 +34,7 @@ bool Move::_LookForPossibleMove(
 void Move::_UpdateReactionBoard(
     std::map<string, std::list<ChessMan>>& reactionBoard,
     std::map<string, ChessMan> const boardState,
-    string position,
+    string const position,
     ChessMan const movedChessMan
 )
 {
@@ -43,13 +43,13 @@ void Move::_UpdateReactionBoard(
 }
 
 void Move::_CheckMovesAheadAndUpdateReactionBoard(
-    string actual_position,
+    string const actual_position,
     std::map<string, std::list<string>>& movesBoard,
     std::map<string, ChessMan> const boardState,
     ChessMan const movedChessMan,
     std::map<string, std::list<ChessMan>>& reactionBoard,
     string range,
-    bool ifFile,
+    bool const ifFile,
     char const file,
     char const rank
 )
@@ -70,13 +70,13 @@ void Move::_CheckMovesAheadAndUpdateReactionBoard(
 }
 
 void Move::_CheckMovesBackAndUpdateReactionBoard(
-    string actual_position,
+    string const actual_position,
     std::map<string, std::list<string>>& movesBoard,
     std::map<string, ChessMan> const boardState,
     ChessMan const movedChessMan,
     std::map<string, std::list<ChessMan>>& reactionBoard,
     string range,
-    bool ifFile,
+    bool const ifFile,
     char const file,
     char const rank
 )
@@ -98,7 +98,7 @@ void Move::_CheckMovesBackAndUpdateReactionBoard(
 }
 
 void Move::_RookPosibleMoves(
-    string actual_position,
+    string const actual_position,
     std::map<string, std::list<string>>& movesBoard,
     std::map<string, ChessMan> const boardState,
     ChessMan const movedChessMan,
@@ -115,7 +115,7 @@ void Move::_RookPosibleMoves(
 }
 
 void Move::_BishopPosibleMoves(
-    string actual_position,
+    string const actual_position,
     std::map<string, std::list<string>>& movesBoard,
     std::map<string, ChessMan> const boardState,
     ChessMan const movedChessMan,
@@ -129,9 +129,9 @@ void Move::_BishopPosibleMoves(
 }
 
 void Move::ChessManPosibleMoves(
-    string actual_position,
+    string const actual_position,
     std::map<string, std::list<string>>& movesBoard,
-    std::map<string, ChessMan> boardState,
+    std::map<string, ChessMan> const boardState,
     std::map<string, std::list<ChessMan>>& reactionBoard
 )
 {

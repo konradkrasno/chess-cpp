@@ -3,6 +3,7 @@ using std::cout;
 using std::endl;
 
 #include "Board.h"
+#include "Move.h"
 #include "subsidiary.h"
 
 Board::Board()
@@ -220,14 +221,23 @@ ChessMan Board::FindChessManOnBoard(char const file, char const rank) const
 }
 
 void Board::CalculateMovesBoardAndReactionBoard(
-    std::map<string, std::list<string>> movesBoard,
-    std::map<string, std::list<ChessMan>> reactionBoard
+    std::map <string, ChessMan> const boardState,
+    std::map <string, std::list<string>>& movesBoard,
+    std::map <string, std::list<ChessMan>>& reactionBoard
 )
 {
-    //TODO finish this function
+    Move move;
+    for (char const& file : fileRange)
+    {
+        for (char const& rank : rankRange)
+        {
+            string position(ConvertFileRandToPosition(file, rank));
+            move.ChessManPosibleMoves(position, movesBoard, boardState, reactionBoard);
+        }
+    }
 }
 
-void Board::MakeMove(string actual_position, string new_position)
+void Board::MakeMove(string const actual_position, string const new_position)
 {
     // TODO finish this function
 }
