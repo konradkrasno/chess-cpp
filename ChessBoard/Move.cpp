@@ -9,13 +9,15 @@ Move::~Move()
 }
 
 bool Move::_LookForPossibleMove(
-    std::list<string>& possibleMoves,
+    string actual_position,
+    std::map<string, std::list<string>>& movesBoard,
     std::map<string, ChessMan> const boardState,
     string position,
     ChessMan const movedChessMan
 )
 {
     ChessMan field(boardState.at(position));
+    std::list<string>& possibleMoves(movesBoard.at(actual_position));
     if (field.GetType() != ChessManType::None)
     {
         if (field.GetColor() == movedChessMan.GetColor()) return true;
@@ -41,7 +43,8 @@ void Move::_UpdateReactionBoard(
 }
 
 void Move::_CheckMovesAheadAndUpdateReactionBoard(
-    std::list<string>& possibleMoves,
+    string actual_position,
+    std::map<string, std::list<string>>& movesBoard,
     std::map<string, ChessMan> const boardState,
     ChessMan const movedChessMan,
     std::map<string, std::list<ChessMan>>& reactionBoard,
@@ -61,13 +64,14 @@ void Move::_CheckMovesAheadAndUpdateReactionBoard(
         if (ifFile) possiblePosition = ConvertFileRandToPosition(*it, rank);
         else possiblePosition = ConvertFileRandToPosition(file, *it);
 
-        if (_LookForPossibleMove(possibleMoves, boardState, possiblePosition, movedChessMan)) break;
+        if (_LookForPossibleMove(actual_position, movesBoard, boardState, possiblePosition, movedChessMan)) break;
         _UpdateReactionBoard(reactionBoard, boardState, possiblePosition, movedChessMan);
     }
 }
 
 void Move::_CheckMovesBackAndUpdateReactionBoard(
-    std::list<string>& possibleMoves,
+    string actual_position,
+    std::map<string, std::list<string>>& movesBoard,
     std::map<string, ChessMan> const boardState,
     ChessMan const movedChessMan,
     std::map<string, std::list<ChessMan>>& reactionBoard,
@@ -88,13 +92,14 @@ void Move::_CheckMovesBackAndUpdateReactionBoard(
         if (ifFile) possiblePosition = ConvertFileRandToPosition(*rit, rank);
         else possiblePosition = ConvertFileRandToPosition(file, *rit);
 
-        if (_LookForPossibleMove(possibleMoves, boardState, possiblePosition, movedChessMan)) break;
+        if (_LookForPossibleMove(actual_position, movesBoard, boardState, possiblePosition, movedChessMan)) break;
         _UpdateReactionBoard(reactionBoard, boardState, possiblePosition, movedChessMan);
     }
 }
 
 void Move::_RookPosibleMoves(
-    std::list<string>& possibleMoves,
+    string actual_position,
+    std::map<string, std::list<string>>& movesBoard,
     std::map<string, ChessMan> const boardState,
     ChessMan const movedChessMan,
     std::map<string, std::list<ChessMan>>& reactionBoard,
@@ -103,14 +108,15 @@ void Move::_RookPosibleMoves(
     char const rank
 )
 {
-    _CheckMovesAheadAndUpdateReactionBoard(possibleMoves, boardState, movedChessMan, reactionBoard, fileRange, true, file, rank);
-    _CheckMovesBackAndUpdateReactionBoard(possibleMoves, boardState, movedChessMan, reactionBoard, fileRange, true, file, rank);
-    _CheckMovesAheadAndUpdateReactionBoard(possibleMoves, boardState, movedChessMan, reactionBoard, rankRange, false, file, rank);
-    _CheckMovesBackAndUpdateReactionBoard(possibleMoves, boardState, movedChessMan, reactionBoard, rankRange, false, file, rank);
+    _CheckMovesAheadAndUpdateReactionBoard(actual_position, movesBoard, boardState, movedChessMan, reactionBoard, fileRange, true, file, rank);
+    _CheckMovesBackAndUpdateReactionBoard(actual_position, movesBoard, boardState, movedChessMan, reactionBoard, fileRange, true, file, rank);
+    _CheckMovesAheadAndUpdateReactionBoard(actual_position, movesBoard, boardState, movedChessMan, reactionBoard, rankRange, false, file, rank);
+    _CheckMovesBackAndUpdateReactionBoard(actual_position, movesBoard, boardState, movedChessMan, reactionBoard, rankRange, false, file, rank);
 }
 
 void Move::_BishopPosibleMoves(
-    std::list<string>& possibleMoves,
+    string actual_position,
+    std::map<string, std::list<string>>& movesBoard,
     std::map<string, ChessMan> const boardState,
     ChessMan const movedChessMan,
     std::map<string, std::list<ChessMan>>& reactionBoard,
@@ -122,8 +128,9 @@ void Move::_BishopPosibleMoves(
     //TODO finish this function
 }
 
-std::list<string> Move::ChessManPosibleMoves(
+void Move::ChessManPosibleMoves(
     string actual_position,
+    std::map<string, std::list<string>>& movesBoard,
     std::map<string, ChessMan> boardState,
     std::map<string, std::list<ChessMan>>& reactionBoard
 )
@@ -145,13 +152,13 @@ std::list<string> Move::ChessManPosibleMoves(
     case ChessManType::None:
         break;
     case ChessManType::Rook:
-        _RookPosibleMoves(possibleMoves, boardState, movedChessMan, reactionBoard, fileRange, file, rank);
+        _RookPosibleMoves(actual_position, movesBoard, boardState, movedChessMan, reactionBoard, fileRange, file, rank);
         break;
     case ChessManType::Knight:
         //TODO finish this function
         break;
     case ChessManType::Bishop:
-        _BishopPosibleMoves(possibleMoves, boardState, movedChessMan, reactionBoard, fileRange, file, rank);
+        _BishopPosibleMoves(actual_position, movesBoard, boardState, movedChessMan, reactionBoard, fileRange, file, rank);
         break;
     case ChessManType::Queen:
         //TODO finish this function
@@ -165,5 +172,4 @@ std::list<string> Move::ChessManPosibleMoves(
     default:
         break;
     }
-    return possibleMoves;
 }

@@ -36,15 +36,30 @@ struct MoveFixture
         state = new std::map<string, ChessMan>;
         *state = boardState;
 
-        std::map<string, std::list<ChessMan>> reactionBoard;
-        std::list<ChessMan> emptyFields;
+        std::map<string, std::list<string>> movesBoard;
+        std::list<string> emptyStringList;
 
         for (char const& file : fileRange)
         {
             for (char const& rank : rankRange)
             {
                 string position(ConvertFileRandToPosition(file, rank));
-                reactionBoard.insert(std::pair<string, std::list<ChessMan>>(position, emptyFields));
+                movesBoard.insert(std::pair<string, std::list<string>>(position, emptyStringList));
+            }
+        }
+        moves = new std::map<string, std::list<string>>;
+        *moves = movesBoard;
+
+
+        std::map<string, std::list<ChessMan>> reactionBoard;
+        std::list<ChessMan> emptyChessManList;
+
+        for (char const& file : fileRange)
+        {
+            for (char const& rank : rankRange)
+            {
+                string position(ConvertFileRandToPosition(file, rank));
+                reactionBoard.insert(std::pair<string, std::list<ChessMan>>(position, emptyChessManList));
             }
         }
         reactions = new std::map<string, std::list<ChessMan>>;
@@ -53,19 +68,23 @@ struct MoveFixture
     ~MoveFixture()
     {
         delete state;
+        delete moves;
         delete reactions;
     }
     std::map<string, ChessMan>* state;
+    std::map<string, std::list<string>>* moves;
     std::map<string, std::list<ChessMan>>* reactions;
 };
 
 BOOST_AUTO_TEST_SUITE(MoveSuite)
 BOOST_FIXTURE_TEST_CASE(testChassManPosibleMovesForRook, MoveFixture)
 {
+    string testPosition("b2");
     Move rook;
-    std::list<string> possibleMoves;
-    possibleMoves = rook.ChessManPosibleMoves("b2", *state, *reactions);
+    rook.ChessManPosibleMoves(testPosition, *moves, *state, *reactions);
 
+    std::map<string, std::list<string>> moves(*moves);
+    std::list<string> possibleMoves(moves.at(testPosition));
     std::list<string>::iterator it;
     cout << "moves: " << endl;
     for (it = possibleMoves.begin(); it != possibleMoves.end(); ++it) cout << *it << endl;
@@ -76,7 +95,7 @@ BOOST_FIXTURE_TEST_CASE(testChassManPosibleMovesForRook, MoveFixture)
 BOOST_FIXTURE_TEST_CASE(testWorkingUpdateReactionBoard, MoveFixture)
 {
     Move rook;
-    rook.ChessManPosibleMoves("b2", *state, *reactions);
+    rook.ChessManPosibleMoves("b2", *moves, *state, *reactions);
 
     std::map<string, std::list<ChessMan>> reactions(*reactions);
     std::list<ChessMan> fields;
@@ -102,3 +121,11 @@ BOOST_AUTO_TEST_CASE(testlEqualOperator)
     BOOST_CHECK(whiteRook1 == whiteRook2);
 }
 BOOST_AUTO_TEST_SUITE_END();
+
+
+BOOST_AUTO_TEST_SUITE(BoardSuite)
+BOOST_AUTO_TEST_CASE(testCalculateStateBoardAndReactionBoard)
+{
+    // TODO finih this test and write code to do it
+}
+BOOST_AUTO_TEST_SUITE_END()

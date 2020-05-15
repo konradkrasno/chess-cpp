@@ -158,8 +158,24 @@ std::map<string, ChessMan> Board::_StartingBoard()
     return mapping;
 }
 
+std::map<string, std::list<string>> Board::_EmptyMovesBoard()
+{
+    std::map<string, std::list<string>> movesBoard;
+    std::list<string> fields;
+
+    for (char const& file : fileRange)
+    {
+        for (char const& rank : rankRange)
+        {
+            string position(ConvertFileRandToPosition(file, rank));
+            movesBoard.insert(std::pair<string, std::list<string>>(position, fields));
+        }
+    }
+    return movesBoard;
+}
+
 std::map<string, std::list<ChessMan>> Board::_EmptyReactionBoard()
-{    
+{
     std::map<string, std::list<ChessMan>> reactionBoard;
     std::list<ChessMan> fields;
 

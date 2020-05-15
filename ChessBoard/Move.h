@@ -10,19 +10,23 @@ class Move
 {
 private:
     bool _LookForPossibleMove(
-        std::list<string>& possibleMoves,
+        string actual_position,
+        std::map<string, std::list<string>>& movesBoard,
         std::map<string, ChessMan> const boardState,
         string position,
-        ChessMan const movedChessMan);
+        ChessMan const movedChessMan
+    );
 
     void _UpdateReactionBoard(
         std::map<string, std::list<ChessMan>>& reactionBoard,
         std::map<string, ChessMan> const boardState,
         string position,
-        ChessMan const movedChessMan);
+        ChessMan const movedChessMan
+    );
 
     void _CheckMovesAheadAndUpdateReactionBoard(
-        std::list<string>& possibleMoves,
+        string actual_position,
+        std::map<string, std::list<string>>& movesBoard,
         std::map<string, ChessMan> const boardState,
         ChessMan const movedChessMan,
         std::map<string, std::list<ChessMan>>& reactionBoard,
@@ -33,7 +37,8 @@ private:
     );
 
     void _CheckMovesBackAndUpdateReactionBoard(
-        std::list<string>& possibleMoves,
+        string actual_position,
+        std::map<string, std::list<string>>& movesBoard,
         std::map<string, ChessMan> const boardState,
         ChessMan const movedChessMan,
         std::map<string, std::list<ChessMan>>& reactionBoard,
@@ -43,7 +48,8 @@ private:
         char const rank
     );
     void _RookPosibleMoves(
-        std::list<string>& possibleMoves,
+        string actual_position,
+        std::map<string, std::list<string>>& movesBoard,
         std::map<string, ChessMan> const boardState,
         ChessMan const movedChessMan,
         std::map<string, std::list<ChessMan>>& reactionBoard,
@@ -52,7 +58,8 @@ private:
         char const rank
     );
     void _BishopPosibleMoves(
-        std::list<string>& possibleMoves,
+        string actual_position,
+        std::map<string, std::list<string>>& movesBoard,
         std::map<string, ChessMan> const boardState,
         ChessMan const movedChessMan,
         std::map<string, std::list<ChessMan>>& reactionBoard,
@@ -64,8 +71,9 @@ private:
 public:
     Move();
     ~Move();
-    std::list<string> ChessManPosibleMoves(
+    void ChessManPosibleMoves(
         string actual_position,
+        std::map<string, std::list<string>>& movesBoard,
         std::map<string, ChessMan> boardState,
         std::map<string, std::list<ChessMan>>& reactionBoard
     );
