@@ -9,9 +9,11 @@ using std::string;
 class Board
 {
 private:
-    std::map <string, ChessMan> _boardMapping;
+    std::map <string, ChessMan> _boardState;
+    std::map <string, std::list<ChessMan>> _reactionBoard;
     std::map<string, ChessMan> _StartingBoard();
-    void _DrawMiddle(LineType const lineType, char file = 0, string chessMan = "none") const;
+    std::map <string, std::list<ChessMan>> _EmptyReactionBoard();
+    void _DrawMiddle(LineType const lineType, char file = 0, string chessManSymbol = "none") const;
     void _DrawEndBegin(LineEndBegin const lineEndBegin, char rank = 0) const;
     void _DrawEntireNonPositionLine(LineType const lineType, LineEndBegin const lineEndBegin, string fileRange, char rank = 0) const;
     void _DrawEntirePositionLine(string fileRange, char rank = 0) const;

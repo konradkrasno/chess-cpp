@@ -7,14 +7,15 @@ using std::endl;
 
 Board::Board()
 {
-    _boardMapping = _StartingBoard();
+    _boardState = _StartingBoard();
+    _reactionBoard = _EmptyReactionBoard();
 }
 
 Board::~Board()
 {
 }
 
-void Board::_DrawMiddle(LineType const lineType, char file, string chessMan) const
+void Board::_DrawMiddle(LineType const lineType, char file, string chessManSymbol) const
 {
     switch (lineType)
     {
@@ -28,13 +29,13 @@ void Board::_DrawMiddle(LineType const lineType, char file, string chessMan) con
         cout << "|" << "      ";
         break;
     case LineType::ChessManPlace:
-        if (chessMan.length() == 2)
+        if (chessManSymbol.length() == 2)
         {
-            cout << "|" << "  " << chessMan << "  ";
+            cout << "|" << "  " << chessManSymbol << "  ";
         }
         else
         {
-            cout << "|" << "  " << chessMan << " ";
+            cout << "|" << "  " << chessManSymbol << " ";
         }
         break;
     case LineType::VerticalAndHorizontalLines:
@@ -79,10 +80,10 @@ void Board::_DrawEntirePositionLine(string fileRange, char rank) const
 {
     for (char const& file : fileRange)
     {
-        string chessManOnCurrentPosition(FindChessManOnBoard(file, rank).GetSymbol());
-        if (chessManOnCurrentPosition != "none")
+        string chessManOnCurrentPositionSymbol(FindChessManOnBoard(file, rank).GetSymbol());
+        if (chessManOnCurrentPositionSymbol != "None")
         {
-            Board::_DrawMiddle(LineType::ChessManPlace, 0, chessManOnCurrentPosition);
+            Board::_DrawMiddle(LineType::ChessManPlace, 0, chessManOnCurrentPositionSymbol);
         }
         else
         {
@@ -111,63 +112,79 @@ std::map<string, ChessMan> Board::_StartingBoard()
 {
     std::map<string, ChessMan> mapping;
 
-    mapping.insert(std::pair<string, ChessMan>("a1", ChessMan("wR", "Rook", "white")));
-    mapping.insert(std::pair<string, ChessMan>("b1", ChessMan("wKn", "Knight", "white")));
-    mapping.insert(std::pair<string, ChessMan>("c1", ChessMan("wB", "Bishop", "white")));
-    mapping.insert(std::pair<string, ChessMan>("d1", ChessMan("wQ", "Queen", "white")));
-    mapping.insert(std::pair<string, ChessMan>("e1", ChessMan("wKi", "King", "white")));
-    mapping.insert(std::pair<string, ChessMan>("f1", ChessMan("wB", "Bishop", "white")));
-    mapping.insert(std::pair<string, ChessMan>("g1", ChessMan("wKn", "Knight", "white")));
-    mapping.insert(std::pair<string, ChessMan>("h1", ChessMan("wR", "Rook", "white")));
-    mapping.insert(std::pair<string, ChessMan>("a2", ChessMan("wp", "Pawn", "white")));
-    mapping.insert(std::pair<string, ChessMan>("b2", ChessMan("wp", "Pawn", "white")));
-    mapping.insert(std::pair<string, ChessMan>("c2", ChessMan("wp", "Pawn", "white")));
-    mapping.insert(std::pair<string, ChessMan>("d2", ChessMan("wp", "Pawn", "white")));
-    mapping.insert(std::pair<string, ChessMan>("e2", ChessMan("wp", "Pawn", "white")));
-    mapping.insert(std::pair<string, ChessMan>("f2", ChessMan("wp", "Pawn", "white")));
-    mapping.insert(std::pair<string, ChessMan>("g2", ChessMan("wp", "Pawn", "white")));
-    mapping.insert(std::pair<string, ChessMan>("h2", ChessMan("wp", "Pawn", "white")));
+    mapping.insert(std::pair<string, ChessMan>("a1", ChessMan(ChessManType::Rook, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("b1", ChessMan(ChessManType::Knight, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("c1", ChessMan(ChessManType::Bishop, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("d1", ChessMan(ChessManType::Queen, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("e1", ChessMan(ChessManType::King, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("f1", ChessMan(ChessManType::Bishop, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("g1", ChessMan(ChessManType::Knight, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("h1", ChessMan(ChessManType::Rook, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("a2", ChessMan(ChessManType::Pawn, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("b2", ChessMan(ChessManType::Pawn, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("c2", ChessMan(ChessManType::Pawn, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("d2", ChessMan(ChessManType::Pawn, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("e2", ChessMan(ChessManType::Pawn, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("f2", ChessMan(ChessManType::Pawn, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("g2", ChessMan(ChessManType::Pawn, 'w')));
+    mapping.insert(std::pair<string, ChessMan>("h2", ChessMan(ChessManType::Pawn, 'w')));
 
-    mapping.insert(std::pair<string, ChessMan>("a8", ChessMan("bR", "Rook", "black")));
-    mapping.insert(std::pair<string, ChessMan>("b8", ChessMan("bKn", "Knight", "black")));
-    mapping.insert(std::pair<string, ChessMan>("c8", ChessMan("bB", "Bishop", "black")));
-    mapping.insert(std::pair<string, ChessMan>("d8", ChessMan("bQ", "Queen", "black")));
-    mapping.insert(std::pair<string, ChessMan>("e8", ChessMan("bKi", "King", "black")));
-    mapping.insert(std::pair<string, ChessMan>("f8", ChessMan("bB", "Bishop", "black")));
-    mapping.insert(std::pair<string, ChessMan>("g8", ChessMan("bKn", "Knight", "black")));
-    mapping.insert(std::pair<string, ChessMan>("h8", ChessMan("bR", "Rook", "black")));
-    mapping.insert(std::pair<string, ChessMan>("a7", ChessMan("bp", "Pawn", "black")));
-    mapping.insert(std::pair<string, ChessMan>("b7", ChessMan("bp", "Pawn", "black")));
-    mapping.insert(std::pair<string, ChessMan>("c7", ChessMan("bp", "Pawn", "black")));
-    mapping.insert(std::pair<string, ChessMan>("d7", ChessMan("bp", "Pawn", "black")));
-    mapping.insert(std::pair<string, ChessMan>("e7", ChessMan("bp", "Pawn", "black")));
-    mapping.insert(std::pair<string, ChessMan>("f7", ChessMan("bp", "Pawn", "black")));
-    mapping.insert(std::pair<string, ChessMan>("g7", ChessMan("bp", "Pawn", "black")));
-    mapping.insert(std::pair<string, ChessMan>("h7", ChessMan("bp", "Pawn", "black")));
+    mapping.insert(std::pair<string, ChessMan>("a8", ChessMan(ChessManType::Rook, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("b8", ChessMan(ChessManType::Knight, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("c8", ChessMan(ChessManType::Bishop, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("d8", ChessMan(ChessManType::Queen, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("e8", ChessMan(ChessManType::King, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("f8", ChessMan(ChessManType::Bishop, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("g8", ChessMan(ChessManType::Knight, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("h8", ChessMan(ChessManType::Rook, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("a7", ChessMan(ChessManType::Pawn, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("b7", ChessMan(ChessManType::Pawn, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("c7", ChessMan(ChessManType::Pawn, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("d7", ChessMan(ChessManType::Pawn, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("e7", ChessMan(ChessManType::Pawn, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("f7", ChessMan(ChessManType::Pawn, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("g7", ChessMan(ChessManType::Pawn, 'b')));
+    mapping.insert(std::pair<string, ChessMan>("h7", ChessMan(ChessManType::Pawn, 'b')));
 
-    string emptyRankRange = "3456";
+    string emptyRankRange = "6543";
     for (char const& file : fileRange)
     {
         for (char const& rank : emptyRankRange)
         {
             string position(ConvertFileRandToPosition(file, rank));
-            mapping.insert(std::pair<string, ChessMan>(position, ChessMan("none", "none", "none")));
+            mapping.insert(std::pair<string, ChessMan>(position, ChessMan(ChessManType::None, 0)));
         }
     }
     return mapping;
 }
 
+std::map<string, std::list<ChessMan>> Board::_EmptyReactionBoard()
+{    
+    std::map<string, std::list<ChessMan>> reactionBoard;
+    std::list<ChessMan> fields;
+
+    for (char const& file : fileRange)
+    {
+        for (char const& rank : rankRange)
+        {
+            string position(ConvertFileRandToPosition(file, rank));
+            reactionBoard.insert(std::pair<string, std::list<ChessMan>>(position, fields));
+        }
+    }
+    return reactionBoard;
+}
+
 void Board::ChangeChessManPosition(string actual_position, string new_position)
 {
-    ChessMan& actual_cc = _boardMapping.at(actual_position);
-    _boardMapping.at(new_position) = actual_cc;
-    actual_cc = ChessMan("none", "none", "none");
+    ChessMan& actual_cc = _boardState.at(actual_position);
+    _boardState.at(new_position) = actual_cc;
+    actual_cc = ChessMan(ChessManType::None, 0);
 }
 
 ChessMan Board::FindChessManOnBoard(char const file, char const rank) const
 {
     string position(ConvertFileRandToPosition(file, rank));
-    return _boardMapping.at(position);
+    return _boardState.at(position);
 }
 
 void Board::MakeMove(string actual_position, string new_position)

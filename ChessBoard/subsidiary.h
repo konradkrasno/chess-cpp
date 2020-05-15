@@ -3,7 +3,7 @@
 using std::string;
 
 string const fileRange = "abcdefgh";
-string const rankRange = "12345678";
+string const rankRange = "87654321";
 
 string ConvertFileRandToPosition(char file, char rank);
 
@@ -21,4 +21,15 @@ enum class LineEndBegin
     TopLine,
     RankHeader,
     InnerLine
+};
+
+enum class ChessManType
+{
+    None,
+    Rook,
+    Knight,
+    Bishop,
+    Queen,
+    King,
+    Pawn,
 };
