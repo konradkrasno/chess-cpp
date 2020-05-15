@@ -8,6 +8,7 @@ using std::endl;
 Board::Board()
 {
     _boardState = _StartingBoard();
+    _movesBoard = _EmptyMovesBoard();
     _reactionBoard = _EmptyReactionBoard();
 }
 
@@ -110,6 +111,11 @@ void Board::DrawBoard() const
 
 std::map<string, ChessMan> Board::_StartingBoard()
 {
+    // This is map object which assign ChessMan on every position on board.
+    // map < Key, Value >
+    // Key - position on board
+    // Value - ChessMan on particular position
+
     std::map<string, ChessMan> mapping;
 
     mapping.insert(std::pair<string, ChessMan>("a1", ChessMan(ChessManType::Rook, 'w')));
@@ -160,6 +166,11 @@ std::map<string, ChessMan> Board::_StartingBoard()
 
 std::map<string, std::list<string>> Board::_EmptyMovesBoard()
 {
+    // This is map object that contains lists of possible moves from particular position.
+    // map < Key, Value >
+    // Key - position on board
+    // Value - list of positions which ChessMan from particular position can move
+
     std::map<string, std::list<string>> movesBoard;
     std::list<string> fields;
 
@@ -176,6 +187,11 @@ std::map<string, std::list<string>> Board::_EmptyMovesBoard()
 
 std::map<string, std::list<ChessMan>> Board::_EmptyReactionBoard()
 {
+    // This is map object that contains lists of ChessMan which can move to particular position.
+    // map < Key, Value >
+    // Key - position on board
+    // Value - list of ChessMan which can move to position
+
     std::map<string, std::list<ChessMan>> reactionBoard;
     std::list<ChessMan> fields;
 
@@ -201,6 +217,14 @@ ChessMan Board::FindChessManOnBoard(char const file, char const rank) const
 {
     string position(ConvertFileRandToPosition(file, rank));
     return _boardState.at(position);
+}
+
+void Board::CalculateMovesBoardAndReactionBoard(
+    std::map<string, std::list<string>> movesBoard,
+    std::map<string, std::list<ChessMan>> reactionBoard
+)
+{
+    //TODO finish this function
 }
 
 void Board::MakeMove(string actual_position, string new_position)

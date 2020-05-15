@@ -26,5 +26,9 @@ public:
     void DrawBoard() const;
     ChessMan FindChessManOnBoard(char const file, char const rank) const;
     void ChangeChessManPosition(string actual_position, string new_position);
+    void CalculateMovesBoardAndReactionBoard(
+        std::map<string, std::list<string>> movesBoard,
+        std::map<string, std::list<ChessMan>> reactionBoard
+    );
     void MakeMove(string actual_position, string new_position);
 };

@@ -6,9 +6,9 @@ using std::endl;
 #include "Move.h"
 #include "ChessMan.h"
 
-struct MoveFixture
+struct BoardFixture
 {
-    MoveFixture()
+    BoardFixture()
     {
         std::map<string, ChessMan> boardState;
         for (char const& file : fileRange)
@@ -65,7 +65,7 @@ struct MoveFixture
         reactions = new std::map<string, std::list<ChessMan>>;
         *reactions = reactionBoard;
     }
-    ~MoveFixture()
+    ~BoardFixture()
     {
         delete state;
         delete moves;
@@ -77,7 +77,7 @@ struct MoveFixture
 };
 
 BOOST_AUTO_TEST_SUITE(MoveSuite)
-BOOST_FIXTURE_TEST_CASE(testChassManPosibleMovesForRook, MoveFixture)
+BOOST_FIXTURE_TEST_CASE(testChassManPosibleMovesForRook, BoardFixture)
 {
     string testPosition("b2");
     Move rook;
@@ -92,7 +92,7 @@ BOOST_FIXTURE_TEST_CASE(testChassManPosibleMovesForRook, MoveFixture)
     std::list<string> expectedMoves({ "c2", "a2", "b1", "b3", "b4", "b5", "b6" });
     BOOST_CHECK(possibleMoves == expectedMoves);
 }
-BOOST_FIXTURE_TEST_CASE(testWorkingUpdateReactionBoard, MoveFixture)
+BOOST_FIXTURE_TEST_CASE(testWorkingUpdateReactionBoard, BoardFixture)
 {
     Move rook;
     rook.ChessManPosibleMoves("b2", *moves, *state, *reactions);
@@ -124,8 +124,11 @@ BOOST_AUTO_TEST_SUITE_END();
 
 
 BOOST_AUTO_TEST_SUITE(BoardSuite)
-BOOST_AUTO_TEST_CASE(testCalculateStateBoardAndReactionBoard)
+BOOST_FIXTURE_TEST_CASE(testCalculateStateBoardAndReactionBoard, BoardFixture)
 {
     // TODO finih this test and write code to do it
+    Board board;
+    board.CalculateMovesBoardAndReactionBoard(*moves, *reactions);
+
 }
 BOOST_AUTO_TEST_SUITE_END()
