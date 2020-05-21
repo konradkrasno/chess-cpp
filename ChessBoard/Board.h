@@ -4,17 +4,13 @@
 using std::string;
 
 #include "subsidiary.h"
-#include "ChessMan.h"
+#include "Move.h"
+#include "BoardAttributes.h"
 
-class Board
+class Board : 
+    public Move
 {
 private:
-    std::map <string, ChessMan> _boardState;
-    std::map <string, std::list<string>> _movesBoard;
-    std::map <string, std::list<ChessMan>> _reactionBoard;
-    std::map<string, ChessMan> _StartingBoard();
-    std::map <string, std::list<string>> _EmptyMovesBoard();
-    std::map <string, std::list<ChessMan>> _EmptyReactionBoard();
     void _DrawMiddle(LineType const lineType, char file = 0, string chessManSymbol = "none") const;
     void _DrawEndBegin(LineEndBegin const lineEndBegin, char rank = 0) const;
     void _DrawEntireNonPositionLine(LineType const lineType, LineEndBegin const lineEndBegin, string fileRange, char rank = 0) const;
@@ -25,11 +21,10 @@ public:
     ~Board();
     void DrawBoard() const;
     ChessMan FindChessManOnBoard(char const file, char const rank) const;
-    void ChangeChessManPosition(string actual_position, string new_position);
-    void CalculateMovesBoardAndReactionBoard(
-        std::map <string, ChessMan> const boardState,
-        std::map <string, std::list<string>>& movesBoard,
-        std::map <string, std::list<ChessMan>>& reactionBoard
-    );
-    void MakeMove(string const actual_position, string const new_position);
+    void CalculateMovesBoardAndReactionBoard();
+    bool Check(char const kingColor, string const kingPosition);
+    bool CheckMate(char const kingColor, string const kingPosition);
+    bool MakeMove(char const playerColor, string const actualPosition, string const newPosition);
+    //TODO rafactor MakeMove to handle what to do with Pawn on last position
+    //TODO write Castling function
 };

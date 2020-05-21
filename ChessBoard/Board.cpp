@@ -3,14 +3,9 @@ using std::cout;
 using std::endl;
 
 #include "Board.h"
-#include "Move.h"
-#include "subsidiary.h"
 
-Board::Board()
+Board::Board() : Move()
 {
-    _boardState = _StartingBoard();
-    _movesBoard = _EmptyMovesBoard();
-    _reactionBoard = _EmptyReactionBoard();
 }
 
 Board::~Board()
@@ -110,134 +105,89 @@ void Board::DrawBoard() const
     cout << endl;
 }
 
-std::map<string, ChessMan> Board::_StartingBoard()
-{
-    // This is map object which assign ChessMan on every position on board.
-    // map < Key, Value >
-    // Key - position on board
-    // Value - ChessMan on particular position
-
-    std::map<string, ChessMan> mapping;
-
-    mapping.insert(std::pair<string, ChessMan>("a1", ChessMan(ChessManType::Rook, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("b1", ChessMan(ChessManType::Knight, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("c1", ChessMan(ChessManType::Bishop, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("d1", ChessMan(ChessManType::Queen, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("e1", ChessMan(ChessManType::King, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("f1", ChessMan(ChessManType::Bishop, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("g1", ChessMan(ChessManType::Knight, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("h1", ChessMan(ChessManType::Rook, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("a2", ChessMan(ChessManType::Pawn, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("b2", ChessMan(ChessManType::Pawn, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("c2", ChessMan(ChessManType::Pawn, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("d2", ChessMan(ChessManType::Pawn, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("e2", ChessMan(ChessManType::Pawn, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("f2", ChessMan(ChessManType::Pawn, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("g2", ChessMan(ChessManType::Pawn, 'w')));
-    mapping.insert(std::pair<string, ChessMan>("h2", ChessMan(ChessManType::Pawn, 'w')));
-
-    mapping.insert(std::pair<string, ChessMan>("a8", ChessMan(ChessManType::Rook, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("b8", ChessMan(ChessManType::Knight, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("c8", ChessMan(ChessManType::Bishop, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("d8", ChessMan(ChessManType::Queen, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("e8", ChessMan(ChessManType::King, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("f8", ChessMan(ChessManType::Bishop, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("g8", ChessMan(ChessManType::Knight, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("h8", ChessMan(ChessManType::Rook, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("a7", ChessMan(ChessManType::Pawn, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("b7", ChessMan(ChessManType::Pawn, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("c7", ChessMan(ChessManType::Pawn, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("d7", ChessMan(ChessManType::Pawn, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("e7", ChessMan(ChessManType::Pawn, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("f7", ChessMan(ChessManType::Pawn, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("g7", ChessMan(ChessManType::Pawn, 'b')));
-    mapping.insert(std::pair<string, ChessMan>("h7", ChessMan(ChessManType::Pawn, 'b')));
-
-    string emptyRankRange = "6543";
-    for (char const& file : fileRange)
-    {
-        for (char const& rank : emptyRankRange)
-        {
-            string position(ConvertFileRandToPosition(file, rank));
-            mapping.insert(std::pair<string, ChessMan>(position, ChessMan(ChessManType::None, 0)));
-        }
-    }
-    return mapping;
-}
-
-std::map<string, std::list<string>> Board::_EmptyMovesBoard()
-{
-    // This is map object that contains lists of possible moves from particular position.
-    // map < Key, Value >
-    // Key - position on board
-    // Value - list of positions which ChessMan from particular position can move
-
-    std::map<string, std::list<string>> movesBoard;
-    std::list<string> fields;
-
-    for (char const& file : fileRange)
-    {
-        for (char const& rank : rankRange)
-        {
-            string position(ConvertFileRandToPosition(file, rank));
-            movesBoard.insert(std::pair<string, std::list<string>>(position, fields));
-        }
-    }
-    return movesBoard;
-}
-
-std::map<string, std::list<ChessMan>> Board::_EmptyReactionBoard()
-{
-    // This is map object that contains lists of ChessMan which can move to particular position.
-    // map < Key, Value >
-    // Key - position on board
-    // Value - list of ChessMan which can move to position
-
-    std::map<string, std::list<ChessMan>> reactionBoard;
-    std::list<ChessMan> fields;
-
-    for (char const& file : fileRange)
-    {
-        for (char const& rank : rankRange)
-        {
-            string position(ConvertFileRandToPosition(file, rank));
-            reactionBoard.insert(std::pair<string, std::list<ChessMan>>(position, fields));
-        }
-    }
-    return reactionBoard;
-}
-
-void Board::ChangeChessManPosition(string actual_position, string new_position)
-{
-    ChessMan& actual_cc = _boardState.at(actual_position);
-    _boardState.at(new_position) = actual_cc;
-    actual_cc = ChessMan(ChessManType::None, 0);
-}
-
 ChessMan Board::FindChessManOnBoard(char const file, char const rank) const
 {
-    string position(ConvertFileRandToPosition(file, rank));
-    return _boardState.at(position);
+    string position(ConvertFileAndRankToPosition(file, rank));
+    return boardAttributes.boardState.at(position);
 }
 
-void Board::CalculateMovesBoardAndReactionBoard(
-    std::map <string, ChessMan> const boardState,
-    std::map <string, std::list<string>>& movesBoard,
-    std::map <string, std::list<ChessMan>>& reactionBoard
-)
+void Board::CalculateMovesBoardAndReactionBoard()
 {
-    Move move;
+    boardAttributes.movesBoard = boardAttributes.EmptyMovesBoard();
+    boardAttributes.reactionBoard = boardAttributes.EmptyReactionBoard();
+
     for (char const& file : fileRange)
     {
         for (char const& rank : rankRange)
         {
-            string position(ConvertFileRandToPosition(file, rank));
-            move.ChessManPosibleMoves(position, movesBoard, boardState, reactionBoard);
+            string position(ConvertFileAndRankToPosition(file, rank));
+            ChessManPossibleMoves(position);
         }
     }
 }
 
-void Board::MakeMove(string const actual_position, string const new_position)
+bool Board::Check(char const kingColor, string const kingPosition)
 {
-    // TODO finish this function
+    std::list<ChessMan> kingFieldReactions(boardAttributes.reactionBoard.at(kingPosition));
+    for (std::list<ChessMan>::iterator king_itr = kingFieldReactions.begin(); king_itr != kingFieldReactions.end(); king_itr++)
+    {
+        char reactingChessManColor(king_itr->GetColor());
+        cout << "color: " << reactingChessManColor << endl;
+        if (reactingChessManColor != kingColor) return true;
+    }
+    return false;
+}
+
+bool Board::CheckMate(char const kingColor, string const kingPosition)
+{
+    //bool checkmate(false);
+    //std::list<string> kingPossibleMoves(attributes.movesBoard.at(kingPosition));
+    //for (std::list<string>::iterator moves_itr = kingPossibleMoves.begin(); moves_itr != kingPossibleMoves.end(); moves_itr++)
+    //{
+    //    std::list<ChessMan> kingFieldReactions(attributes.reactionBoard.at(*moves_itr));
+    //    for (std::list<ChessMan>::iterator reactions_itr = kingFieldReactions.begin(); reactions_itr != kingFieldReactions.end(); reactions_itr++)
+    //    {
+    //        char reactingChessManColor(reactions_itr->GetColor());
+    //        if (reactingChessManColor != kingColor) checkmate = true;
+    //    }
+    //}
+    return false;
+}
+
+bool Board::MakeMove(char const playerColor, string const actualPosition, string const newPosition)
+{
+    CalculateMovesBoardAndReactionBoard();
+    ChessMan& actualPositionChessMan(boardAttributes.boardState.at(actualPosition));
+    ChessMan const movedChessMan(actualPositionChessMan);
+    string& kingPosition(boardAttributes.kingsPositions.at(playerColor));
+
+    if (movedChessMan.GetColor() == playerColor)
+    {
+        std::list<string> allowedMoves(boardAttributes.movesBoard.at(actualPosition));
+        for (std::list<string>::iterator moves_itr = allowedMoves.begin(); moves_itr != allowedMoves.end(); moves_itr++)
+        {
+            if (newPosition == *moves_itr)
+            {
+                actualPositionChessMan = ChessMan(ChessManType::None, 0);
+                CalculateMovesBoardAndReactionBoard();
+                if (Check(playerColor, kingPosition))
+                {
+                    cout << "Move is not allowed. The white King is checked!" << endl;
+                    actualPositionChessMan = movedChessMan;
+                    return false;
+                }
+                ChessMan& newPositionChessMan(boardAttributes.boardState.at(newPosition));
+                newPositionChessMan = movedChessMan;
+                if (movedChessMan.GetType() == ChessManType::King) kingPosition = newPosition;
+                newPositionChessMan.ChangeFirstMove();
+                return true;
+            }
+        }
+    }
+
+    if (actualPositionChessMan == movedChessMan)
+    {
+        cout << "Move is not allowed." << endl;
+        return false;
+    }
 }
