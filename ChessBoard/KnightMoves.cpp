@@ -25,26 +25,28 @@ void KnightMoves::CheckKnightMovesAndUpdateReactionBoard(
 	int step(1);
 	int fileIndex(file_range.find(file));
 	int rankIndex(rank_range.find(rank));
-	auto file_it = file_range.begin() + fileIndex + 1 + addFileStep;
-	auto rank_it = rank_range.begin() + rankIndex + 1 + addRankStep;
 
-	for (file_it, rank_it, step;
-		 file_it != file_range.end() && rank_it != rank_range.end() && step < 2;
-		 file_it++, rank_it++, step++)
+	if (fileIndex + 1 < file_range.size() && rankIndex + 1 < rank_range.size())
 	{
-		string possiblePosition(ConvertFileAndRankToPosition(*file_it, *rank_it));
+		auto file_it = file_range.begin() + fileIndex + 1 + addFileStep;
+		auto rank_it = rank_range.begin() + rankIndex + 1 + addRankStep;
+		for (file_it, rank_it, step;
+			file_it != file_range.end() && rank_it != rank_range.end() && step < 2;
+			file_it++, rank_it++, step++)
+		{
+			string possiblePosition(ConvertFileAndRankToPosition(*file_it, *rank_it));
 
-		if (LookForPossibleMoveAndUpdateReactionBoard(
-			boardState,
-			movesBoard,
-			reactionBoard,
-			actualPosition,
-			possiblePosition,
-			movedChessMan
-		))
-			break;
+			if (LookForPossibleMoveAndUpdateReactionBoard(
+				boardState,
+				movesBoard,
+				reactionBoard,
+				actualPosition,
+				possiblePosition,
+				movedChessMan
+			))
+				break;
+		}
 	}
-
 }
 
 void KnightMoves::KnightPossibleMoves(

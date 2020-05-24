@@ -7,6 +7,22 @@ using std::string;
 #include "Move.h"
 #include "BoardAttributes.h"
 
+enum class LineType
+{
+    FileHeader,
+    TopHorizontalLine,
+    VerticalLines,
+    VerticalAndHorizontalLines,
+    ChessManPlace
+};
+
+enum class LineEndBegin
+{
+    TopLine,
+    RankHeader,
+    InnerLine
+};
+
 class Board : 
     public Move
 {
@@ -15,16 +31,20 @@ private:
     void _DrawEndBegin(LineEndBegin const lineEndBegin, char rank = 0) const;
     void _DrawEntireNonPositionLine(LineType const lineType, LineEndBegin const lineEndBegin, string fileRange, char rank = 0) const;
     void _DrawEntirePositionLine(string fileRange, char rank = 0) const;
+    void PawnOnEndLine();
+    bool NotFirstMove(char const file, char const rank);
+    bool NotEmpty(char const file, char const rank);
+    void LookForCastling(char const playerColor, char const file, char const rank, string const file_range, int& cast, char& rookFileForCastling);
 
 public:
     Board();
     ~Board();
-    void DrawBoard() const;
+    void DrawBoard(char const playerColor) const;
     ChessMan FindChessManOnBoard(char const file, char const rank) const;
     void CalculateMovesBoardAndReactionBoard();
     bool Check(char const kingColor, string const kingPosition);
-    bool CheckMate(char const kingColor, string const kingPosition);
+    bool CheckMate(char const kingColor);
     bool MakeMove(char const playerColor, string const actualPosition, string const newPosition);
-    //TODO rafactor MakeMove to handle what to do with Pawn on last position
-    //TODO write Castling function
+    int FindCastlings(char const playerColor, char& rookFileForCastling, char const castlingRank);
+    void MakeCastling(char const playerColor, char const rookFile, char const castlingRank);
 };

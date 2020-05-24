@@ -5,6 +5,17 @@ using std::string;
 
 #include "subsidiary.h"
 
+enum class ChessManType
+{
+    None,
+    Rook,
+    Knight,
+    Bishop,
+    Queen,
+    King,
+    Pawn,
+};
+
 class ChessMan
 {
 private:

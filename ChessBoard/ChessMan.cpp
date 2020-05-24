@@ -7,6 +7,7 @@ ChessMan::ChessMan(ChessManType const type, char const color) : _type(type), _co
 	{
 	case ChessManType::None:
 		_symbol += "None";
+		_firstMove = false;
 		break;
 	case ChessManType::Rook:
 		_symbol += _color;
@@ -16,14 +17,17 @@ ChessMan::ChessMan(ChessManType const type, char const color) : _type(type), _co
 	case ChessManType::Knight:
 		_symbol += _color;
 		_symbol += "Kn";
+		_firstMove = false;
 		break;
 	case ChessManType::Bishop:
 		_symbol += _color;
 		_symbol += "B";
+		_firstMove = false;
 		break;
 	case ChessManType::Queen:
 		_symbol += _color;
 		_symbol += "Q";
+		_firstMove = false;
 		break;
 	case ChessManType::King:
 		_symbol += _color;

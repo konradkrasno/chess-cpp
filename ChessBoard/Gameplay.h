@@ -8,20 +8,20 @@ using std::string;
 #include "Move.h"
 #include "Board.h"
 
-
 class Gameplay
 {
-private:
-	Board board;
-	std::map<char, string> players;
 public:
 	Gameplay();
 	~Gameplay();
-	bool ValidateInput(string input);
-	string GetInputFromUser(char playerColor, string message);
-	char SwitchPlayer(char playerColor);
+	Board board;
+	char SwitchPlayer(char const playerColor);
+	string MakeLowercase(string input);
+	bool ValidatePositionInput(string input);
+	bool GetInputFromUser(char const playerColor, string const message, string& validPosition, bool& castling);
+	bool CheckInput(string input, char const playerColor, bool& castling);
+	void Exit();
+	void Help() const;
+	void PleaseDrawBoard(char const playerColor) const;
+	bool Castling(char const playerColor);
 	void StartGame();
-	//TODO write function which make lowercase from input
-	//TODO write help function
-	//TODO write function for drawing board by command
 };
