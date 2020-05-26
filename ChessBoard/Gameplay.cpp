@@ -11,6 +11,8 @@ static const std::map<char, string> players
 	{ 'b', "Black" }
 };
 
+static const bool invertTable(false);
+
 
 Gameplay::Gameplay()
 {
@@ -89,7 +91,8 @@ bool Gameplay::GetInputFromUser(char const playerColor, string const message, st
 	cout << "Give coordinates or print help for more information about other commands: ";
 	string input;
 	cin >> input;
-	bool valid(CheckInput(MakeLowercase(input), playerColor, castling));
+	input = MakeLowercase(input);
+	bool valid(CheckInput(input, playerColor, castling));
 	if (valid)
 	{
 		validPosition = input;
@@ -119,10 +122,10 @@ void Gameplay::Help() const
 
 void Gameplay::PleaseDrawBoard(char const playerColor) const
 {
-	board.DrawBoard(playerColor);
+	board.DrawBoard(playerColor, invertTable);
 }
 
-bool Gameplay::Castling(char const playerColor)
+bool Gameplay::Castling(char const playerColor, string test_input)
 {
 	int number_of_castlings;
 	char rookFileForCastling;
@@ -136,8 +139,12 @@ bool Gameplay::Castling(char const playerColor)
 	{
 		cout << "Which rook would you like to make castling?" << endl;
 		cout << "Give me coodinate letter: ";
+
 		string input;
-		cin >> input;
+		if (test_input != "default") input = test_input;
+		else cin >> input;
+		input = MakeLowercase(input);
+
 		if (input == "a" || input == "h")
 		{
 			rookFileForCastling = input[0];
@@ -159,6 +166,24 @@ bool Gameplay::Castling(char const playerColor)
 	return false;
 }
 
+bool Gameplay::SwitchPlayerAndLookForCheckMateOrCheck(char& playerColor)
+{
+	playerColor = SwitchPlayer(playerColor);
+	board.DrawBoard(playerColor, invertTable);
+
+	if (board.CheckMate(playerColor))
+	{
+		cout << "Check mate! " << players.at(SwitchPlayer(playerColor)) << ", you win!" << endl;
+		return true;
+	}
+
+	if (board.Check(playerColor, board.boardAttributes.kingsPositions.at(playerColor)))
+		cout << players.at(playerColor) << ", your King is checked!" << endl;
+
+
+	return false;
+}
+
 void Gameplay::StartGame()
 {
 	cout << "This is Chess Game" << endl;
@@ -167,7 +192,7 @@ void Gameplay::StartGame()
 
 	char playerColor('w');
 
-	board.DrawBoard(playerColor);
+	board.DrawBoard(playerColor, invertTable);
 
 	while (true)
 	{
@@ -191,18 +216,12 @@ void Gameplay::StartGame()
 		{
 			if (board.MakeMove(playerColor, actual_position, new_position))
 			{
-				playerColor = SwitchPlayer(playerColor);
-				board.DrawBoard(playerColor);
-				if (board.Check(playerColor, board.boardAttributes.kingsPositions.at(playerColor)))
-					cout << players.at(playerColor) << ", your King is checked!" << endl;
+				if (SwitchPlayerAndLookForCheckMateOrCheck(playerColor)) break;
 			}
-			//if (board.CheckMate(playerColor, board.attributes.kingsPositions.at(playerColor))) break;
 		}
 		else if (castling)
 		{
-			playerColor = SwitchPlayer(playerColor);
-			board.DrawBoard(playerColor);
-			//if (board.CheckMate(playerColor, board.attributes.kingsPositions.at(playerColor))) break;
+			if (SwitchPlayerAndLookForCheckMateOrCheck(playerColor)) break;
 		}
 	}
 }

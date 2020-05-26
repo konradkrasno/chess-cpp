@@ -1,7 +1,7 @@
 #include "subsidiary.h"
 #include "ChessMan.h"
 
-ChessMan::ChessMan(ChessManType const type, char const color) : _type(type), _color(color)
+ChessMan::ChessMan(ChessManType const type, char const color, string position) : _type(type), _color(color), _position(position)
 {
 	switch (_type)
 	{
@@ -52,5 +52,9 @@ ChessMan::~ChessMan()
 
 bool ChessMan::operator==(ChessMan const& chessMan) const
 {
-	return _symbol == chessMan._symbol;
+	return (_symbol == chessMan._symbol && _position == chessMan._position);
+}
+bool ChessMan::operator!=(ChessMan const& chessMan) const
+{
+	return (_symbol != chessMan._symbol || _position != chessMan._position);
 }

@@ -90,12 +90,16 @@ void Board::_DrawEntirePositionLine(string fileRange, char rank) const
     Board::_DrawEndBegin(LineEndBegin::InnerLine);
 }
 
-void Board::DrawBoard(char const playerColor) const
+void Board::DrawBoard(char const playerColor, bool const invertTable) const
 {
-    string rank_range(rankRange);
-    //string rank_range;
-    //if (playerColor == 'w') rank_range = rankRange;
-    //else rank_range = inverted_rankRange;
+    string rank_range;
+    if (invertTable)
+    {
+        if (playerColor == 'w') rank_range = rankRange;
+        else rank_range = inverted_rankRange;
+    }
+    else
+        rank_range = rankRange;
 
     cout << "    ";
     Board::_DrawEntireNonPositionLine(LineType::FileHeader, LineEndBegin::TopLine, fileRange);
@@ -131,50 +135,95 @@ void Board::CalculateMovesBoardAndReactionBoard()
     }
 }
 
+void Board::CalculateMovesBoardAndReactionBoardWithoutKings()
+{
+    string whiteKingPosition(boardAttributes.kingsPositions.at('w'));
+    ChessMan& whiteKingField(boardAttributes.boardState.at(whiteKingPosition));
+    ChessMan const copyWhiteKing(whiteKingField);
+
+    string blackKingPosition(boardAttributes.kingsPositions.at('b'));
+    ChessMan& blackKingField(boardAttributes.boardState.at(blackKingPosition));
+    ChessMan const copyBlackKing(blackKingField);
+
+    whiteKingField = ChessMan(ChessManType::None, 0);
+    blackKingField = ChessMan(ChessManType::None, 0);
+    CalculateMovesBoardAndReactionBoard();
+    whiteKingField = copyWhiteKing;
+    blackKingField = copyBlackKing;
+}
+
 bool Board::Check(char const kingColor, string const kingPosition)
 {
     std::list<ChessMan> kingFieldReactions(boardAttributes.reactionBoard.at(kingPosition));
     for (std::list<ChessMan>::iterator king_it = kingFieldReactions.begin(); king_it != kingFieldReactions.end(); king_it++)
     {
         char reactingChessManColor(king_it->GetColor());
-        if (reactingChessManColor != kingColor) return true;
+        if (reactingChessManColor != kingColor)
+        {
+            return true;
+        }
     }
     return false;
 }
 
 bool Board::CheckMate(char const kingColor)
 {
-    //TODO write CheckMate function
-
-    bool checkMate(true);
+    bool kingIsCheck(false);
+    bool allKingMovesIsChecked(true);
+    bool checkingChessManNotCaptured(true);
 
     string kingPosition(boardAttributes.kingsPositions.at(kingColor));
+    if (Check(kingColor, kingPosition))
+    {
+        kingIsCheck = true;
+    }
 
     std::list<string> kingMoves(boardAttributes.movesBoard.at(kingPosition));
     for (std::list<string>::iterator kingMoves_it = kingMoves.begin(); kingMoves_it != kingMoves.end(); kingMoves_it++)
     {
         if (!Check(kingColor, *kingMoves_it))
         {
-            checkMate = false;
+            allKingMovesIsChecked = false;
             break;
         }
     }
 
+    int count(0);
     std::list<ChessMan> kingFieldReactions(boardAttributes.reactionBoard.at(kingPosition));
     for (std::list<ChessMan>::iterator kingReactions_it = kingFieldReactions.begin(); kingReactions_it != kingFieldReactions.end(); kingReactions_it++)
     {
-        //char reactingChessManColor(kingReactions_it->GetColor());
-        //if (reactingChessManColor != kingColor) return true;
+        if (kingReactions_it->GetColor() != kingColor)
+        {
+            count += 1;
+
+            string checkingChessManPosition(kingReactions_it->GetPosition());
+            std::list<ChessMan> reactionsAtCheckingChessMan(boardAttributes.reactionBoard.at(checkingChessManPosition));
+            for (std::list<ChessMan>::iterator reactionsEnemy_it = reactionsAtCheckingChessMan.begin();
+                reactionsEnemy_it != reactionsAtCheckingChessMan.end();
+                reactionsEnemy_it++)
+            {
+                if (reactionsEnemy_it->GetColor() == kingColor && reactionsEnemy_it->GetType() != ChessManType::King)
+                {
+                    checkingChessManNotCaptured = false;
+                }
+            }
+        }
     }
 
+    if (count > 1)
+    {
+        checkingChessManNotCaptured = true;
+    }
 
-    return checkMate;
+    if (kingIsCheck == true && allKingMovesIsChecked == true && checkingChessManNotCaptured == true)
+    {
+        return true;
+    }
+    return false;
 }
 
-bool Board::MakeMove(char const playerColor, string const actualPosition, string const newPosition)
+bool Board::MakeMove(char const playerColor, string const actualPosition, string const newPosition, string test_input)
 {
-    //TODO rafactor MakeMove to handle what to do with Pawn on last position
-
     CalculateMovesBoardAndReactionBoard();
     ChessMan& actualPositionChessMan(boardAttributes.boardState.at(actualPosition));
     ChessMan const copy_actualPositionChessMan(actualPositionChessMan);
@@ -190,20 +239,40 @@ bool Board::MakeMove(char const playerColor, string const actualPosition, string
         {
             if (newPosition == *moves_itr)
             {
+                if (copy_actualPositionChessMan.GetType() == ChessManType::Pawn)
+                {
+                    if (newPosition[1] == '1' || newPosition[1] == '8')
+                    {
+                        return PawnOnEndLine(
+                            playerColor,
+                            actualPositionChessMan,
+                            copy_actualPositionChessMan,
+                            newPositionChessMan,
+                            newPosition,
+                            kingPosition,
+                            test_input
+                        );
+                    }
+                }
+
                 actualPositionChessMan = ChessMan(ChessManType::None, 0);
                 newPositionChessMan = copy_actualPositionChessMan;
+                newPositionChessMan.ChangePosition(newPosition);
+
                 if (copy_actualPositionChessMan.GetType() == ChessManType::King) kingPosition = newPosition;
 
-                CalculateMovesBoardAndReactionBoard();
+                CalculateMovesBoardAndReactionBoardWithoutKings();
                 if (Check(playerColor, kingPosition))
                 {
                     cout << "Move is not allowed. The King is checked!" << endl;
                     actualPositionChessMan = copy_actualPositionChessMan;
                     newPositionChessMan = copy_newPositionChessMan;
                     if (copy_actualPositionChessMan.GetType() == ChessManType::King) kingPosition = actualPosition;
+
                     return false;
                 }
                 newPositionChessMan.ChangeFirstMove();
+
                 return true;
             }
         }
@@ -213,11 +282,73 @@ bool Board::MakeMove(char const playerColor, string const actualPosition, string
     return false;
 }
 
-void Board::PawnOnEndLine()
+int Board::GetInputForPawnOnEndLine(char const playerColor, string const test_input)
 {
-    //TODO finish
+    cout << "Your Pawn achieved end line! For what chessman would you like to change your Pawn?" << endl;
+    cout << "Print:" << endl;
+    cout << "1 for Queen" << endl;
+    cout << "2 for Rook" << endl;
+    cout << "3 for Knight" << endl;
+    cout << "4 for Bishop" << endl;
+
+    string input;
+    while (true)
+    {
+        if (test_input != "default") input = test_input;
+        else std::cin >> input;
+
+        if (input == "1") return 1;
+        else if (input == "2") return 2;
+        else if (input == "3") return 3;
+        else if (input == "4") return 4;
+
+        cout << "Wrong command. Try again" << endl;
+    }
 }
 
+bool Board::PawnOnEndLine(
+    char const playerColor,
+    ChessMan& actualPositionChessMan,
+    ChessMan const copy_actualPositionChessMan,
+    ChessMan& newPositionChessMan,
+    string const newPosition,
+    string kingPosition,
+    string const test_input
+)
+{
+    int choice(GetInputForPawnOnEndLine(playerColor, test_input));
+
+    actualPositionChessMan = ChessMan(ChessManType::None, 0);
+    switch (choice)
+    {
+    case 1:
+        newPositionChessMan = ChessMan(ChessManType::Queen, playerColor, newPosition);
+        break;
+    case 2:
+        newPositionChessMan = ChessMan(ChessManType::Rook, playerColor, newPosition);
+        break;
+    case 3:
+        newPositionChessMan = ChessMan(ChessManType::Knight, playerColor, newPosition);
+        break;
+    case 4:
+        newPositionChessMan = ChessMan(ChessManType::Bishop, playerColor, newPosition);
+        break;
+    default:
+        break;
+    }
+    newPositionChessMan.ChangePosition(newPosition);
+
+    CalculateMovesBoardAndReactionBoardWithoutKings();
+    if (Check(playerColor, kingPosition))
+    {
+        cout << "Move is not allowed. The King is checked!" << endl;
+        actualPositionChessMan = copy_actualPositionChessMan;
+        newPositionChessMan = ChessMan(ChessManType::None, 0);
+
+        return false;
+    }
+    return true;
+}
 
 bool Board::NotFirstMove(char const file, char const rank)
 {
@@ -244,6 +375,7 @@ void Board::LookForCastling(char const playerColor, char const file, char const 
     }
     else
     {
+
         for (auto file_it = file_range.begin(); file_it != file_range.end(); file_it++)
         {
             if (Check(playerColor, ConvertFileAndRankToPosition(*file_it, rank)))
@@ -273,13 +405,14 @@ int Board::FindCastlings(char const playerColor, char& rookFileForCastling, char
     string empty_files_rookA("bcd");
     string empty_files_rookH("fg");
 
+    CalculateMovesBoardAndReactionBoardWithoutKings();
+
     if (NotFirstMove(king_file, castlingRank))
     {
         cout << "King was moved" << endl;
         return 0;
     }
 
-    CalculateMovesBoardAndReactionBoard();
     if (Check(playerColor, ConvertFileAndRankToPosition(king_file, castlingRank)))
     {
         cout << "Move is not allowed. The King is checked!" << endl;
@@ -288,7 +421,7 @@ int Board::FindCastlings(char const playerColor, char& rookFileForCastling, char
 
     LookForCastling(playerColor, rook_fileA, castlingRank, empty_files_rookA, castlingA, rookFileForCastling);
     LookForCastling(playerColor, rook_fileH, castlingRank, empty_files_rookH, castlingH, rookFileForCastling);
-
+    
     int castling(castlingA + castlingH);
     if (castling == 2) rookFileForCastling = 0;
 
@@ -312,12 +445,16 @@ void Board::MakeCastling(char const playerColor, char const rookFile, char const
     ChessMan& actualRookPositionField(boardAttributes.boardState.at(actualRookPosition));
     ChessMan& newRookPositionField(boardAttributes.boardState.at(newRookPosition));
     newRookPositionField = actualRookPositionField;
+    newRookPositionField.ChangePosition(newRookPosition);
     newRookPositionField.ChangeFirstMove();
     actualRookPositionField = ChessMan(ChessManType::None, 0);
 
     ChessMan& actualKingPositionField(boardAttributes.boardState.at(actualKingPosition));
     ChessMan& newKingPositionField(boardAttributes.boardState.at(newKingPosition));
     newKingPositionField = actualKingPositionField;
+    newKingPositionField.ChangePosition(newKingPosition);
     newKingPositionField.ChangeFirstMove();
     actualKingPositionField = ChessMan(ChessManType::None, 0);
+
+    CalculateMovesBoardAndReactionBoardWithoutKings();
 }

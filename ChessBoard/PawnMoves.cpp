@@ -43,8 +43,7 @@ void PawnMoves::LookForPawnPossibleCaptureAndUpdateReactionBoard(
             possibleMoves.push_back(possiblePosition);
         }
     }
-    if (checkedField.GetColor() != movedChessMan.GetColor())
-        UpdateReactionBoard(reactionBoard, possiblePosition, movedChessMan);
+    UpdateReactionBoard(reactionBoard, possiblePosition, movedChessMan);
 }
 
 void PawnMoves::CheckPawnCaptures(

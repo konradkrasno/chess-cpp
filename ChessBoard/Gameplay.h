@@ -22,6 +22,7 @@ public:
 	void Exit();
 	void Help() const;
 	void PleaseDrawBoard(char const playerColor) const;
-	bool Castling(char const playerColor);
+	bool Castling(char const playerColor, string test_input = "default");
+	bool SwitchPlayerAndLookForCheckMateOrCheck(char& playerColor);
 	void StartGame();
 };

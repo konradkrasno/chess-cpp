@@ -21,22 +21,22 @@ struct FakeBoardAttributesFixture
                 fakeBoardState.insert(std::pair<string, ChessMan>(position, ChessMan(ChessManType::None, 0)));
             }
         }
-        fakeBoardState.at("b2") = ChessMan(ChessManType::Rook, 'w');
-        fakeBoardState.at("g6") = ChessMan(ChessManType::Rook, 'w');
-        fakeBoardState.at("e2") = ChessMan(ChessManType::Knight, 'w');
-        fakeBoardState.at("b8") = ChessMan(ChessManType::Knight, 'w');
-        fakeBoardState.at("d2") = ChessMan(ChessManType::Bishop, 'w');
-        fakeBoardState.at("d1") = ChessMan(ChessManType::Queen, 'w');
-        fakeBoardState.at("e1") = ChessMan(ChessManType::King, 'w');
-        fakeBoardState.at("a6") = ChessMan(ChessManType::Pawn, 'w');
-        fakeBoardState.at("g4") = ChessMan(ChessManType::Pawn, 'w');
-        fakeBoardState.at("e4") = ChessMan(ChessManType::Pawn, 'w');
+        fakeBoardState.at("b2") = ChessMan(ChessManType::Rook, 'w', "b2");
+        fakeBoardState.at("g6") = ChessMan(ChessManType::Rook, 'w', "g6");
+        fakeBoardState.at("e2") = ChessMan(ChessManType::Knight, 'w', "e2");
+        fakeBoardState.at("b8") = ChessMan(ChessManType::Knight, 'w', "b8");
+        fakeBoardState.at("d2") = ChessMan(ChessManType::Bishop, 'w', "d2");
+        fakeBoardState.at("d1") = ChessMan(ChessManType::Queen, 'w', "d1");
+        fakeBoardState.at("e1") = ChessMan(ChessManType::King, 'w', "e1");
+        fakeBoardState.at("a6") = ChessMan(ChessManType::Pawn, 'w', "a6");
+        fakeBoardState.at("g4") = ChessMan(ChessManType::Pawn, 'w', "g4");
+        fakeBoardState.at("e4") = ChessMan(ChessManType::Pawn, 'w', "e4");
 
-        fakeBoardState.at("b6") = ChessMan(ChessManType::Pawn, 'b');
-        fakeBoardState.at("e5") = ChessMan(ChessManType::Pawn, 'b');
-        fakeBoardState.at("d5") = ChessMan(ChessManType::Pawn, 'b');
-        fakeBoardState.at("f4") = ChessMan(ChessManType::Pawn, 'b');
-        fakeBoardState.at("h7") = ChessMan(ChessManType::Pawn, 'b');
+        fakeBoardState.at("b6") = ChessMan(ChessManType::Pawn, 'b', "b6");
+        fakeBoardState.at("e5") = ChessMan(ChessManType::Pawn, 'b', "e5");
+        fakeBoardState.at("d5") = ChessMan(ChessManType::Pawn, 'b', "d5");
+        fakeBoardState.at("f4") = ChessMan(ChessManType::Pawn, 'b', "f4");
+        fakeBoardState.at("h7") = ChessMan(ChessManType::Pawn, 'b', "h7");
 
         std::map<string, std::list<string>> fakeMovesBoard;
         std::list<string> emptyStringList;
@@ -215,18 +215,35 @@ BOOST_FIXTURE_TEST_CASE(testPossibleMovesForQueen, FakeBoardAttributesFixture)
     BOOST_CHECK(possibleMoves == expectedMoves);
 }
 
-BOOST_FIXTURE_TEST_CASE(testPossibleMovesForKing, FakeBoardAttributesFixture)
+BOOST_FIXTURE_TEST_CASE(testPossibleMovesForKingVariant1, FakeBoardAttributesFixture)
 {
     string testPosition("e1");
+    move->boardAttributes.boardState.at("d2") = ChessMan(ChessManType::Queen, 'b', "d2");
     move->ChessManPossibleMoves(testPosition);
 
     std::list<string> possibleMoves(move->boardAttributes.movesBoard.at(testPosition));
     cout << "moves: " << endl;
     for (auto it = possibleMoves.begin(); it != possibleMoves.end(); it++) cout << *it << endl;
     
-    std::list<string> expectedMoves({ "f1", "f2" });
+    std::list<string> expectedMoves({ "f1", "f2", "d2" });
     BOOST_CHECK(possibleMoves == expectedMoves);
 }
+BOOST_FIXTURE_TEST_CASE(testPossibleMovesForKingVariant2, EmptyBoardFixture)
+{
+    string testPosition("e4");
+
+    emptyBoard->boardAttributes.boardState.at("e4") = ChessMan(ChessManType::King, 'w', "e4");
+
+    emptyBoard->ChessManPossibleMoves(testPosition);
+
+    std::list<string> possibleMoves(emptyBoard->boardAttributes.movesBoard.at(testPosition));
+    cout << "moves: " << endl;
+    for (auto it = possibleMoves.begin(); it != possibleMoves.end(); it++) cout << *it << endl;
+
+    std::list<string> expectedMoves({ "f4", "e3", "d4", "e5", "f3", "f5", "d3", "d5" });
+    BOOST_CHECK(possibleMoves == expectedMoves);
+}
+
 
 BOOST_FIXTURE_TEST_CASE(testPossibleMovesForPawn, FakeBoardAttributesFixture)
 {
@@ -284,7 +301,7 @@ BOOST_FIXTURE_TEST_CASE(testWorkingUpdateReactionBoardForRook, FakeBoardAttribut
     fields = move->boardAttributes.reactionBoard.at("c2");
     std::list<ChessMan>::iterator it = fields.begin();
     ChessMan insertedChessMan(*it);
-    ChessMan expectedChessMan(ChessManType::Rook, 'w');
+    ChessMan expectedChessMan(ChessManType::Rook, 'w', "b2");
     BOOST_CHECK(insertedChessMan == expectedChessMan);
 }
 BOOST_FIXTURE_TEST_CASE(testWorkingUpdateReactionBoardForPawn, FakeBoardAttributesFixture)
@@ -295,7 +312,7 @@ BOOST_FIXTURE_TEST_CASE(testWorkingUpdateReactionBoardForPawn, FakeBoardAttribut
     fields = move->boardAttributes.reactionBoard.at("g6");
     std::list<ChessMan>::iterator it = fields.begin();
     ChessMan insertedChessMan(*it);
-    ChessMan expectedChessMan(ChessManType::Pawn, 'b');
+    ChessMan expectedChessMan(ChessManType::Pawn, 'b', "h7");
     BOOST_CHECK(insertedChessMan == expectedChessMan);
 }
 
@@ -305,14 +322,26 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(ChessManSuite)
 BOOST_AUTO_TEST_CASE(testGetSymbol)
 {
-    ChessMan whiteRook(ChessMan(ChessManType::Rook, 'w'));
+    ChessMan whiteRook(ChessMan(ChessManType::Rook, 'w', "a2"));
     BOOST_CHECK(whiteRook.GetSymbol() == "wR");
 }
 BOOST_AUTO_TEST_CASE(testlEqualOperator)
 {
-    ChessMan whiteRook1(ChessManType::Rook, 'w');
-    ChessMan whiteRook2(ChessManType::Rook, 'w');
+    ChessMan whiteRook1(ChessManType::Rook, 'w', "c2");
+    ChessMan whiteRook2(ChessManType::Rook, 'w', "c2");
     BOOST_CHECK(whiteRook1 == whiteRook2);
+}
+BOOST_AUTO_TEST_CASE(testlNotEqualOperatorForSymbol)
+{
+    ChessMan whiteRook(ChessManType::Rook, 'w', "c2");
+    ChessMan whiteKnight(ChessManType::Knight, 'w', "c2");
+    BOOST_CHECK(whiteRook != whiteKnight);
+}
+BOOST_AUTO_TEST_CASE(testlNotEqualOperatorForPosition)
+{
+    ChessMan whiteRook1(ChessManType::Rook, 'w', "c2");
+    ChessMan whiteRook2(ChessManType::Rook, 'w', "g3");
+    BOOST_CHECK(whiteRook1 != whiteRook2);
 }
 BOOST_AUTO_TEST_SUITE_END();
 
@@ -339,19 +368,23 @@ BOOST_FIXTURE_TEST_CASE(testCalculateStateBoardAndReactionBoard, FakeBoardAttrib
     BOOST_CHECK(possibleMovesFromPosition1 == expectedMovesFromPosition1);
     BOOST_CHECK(possibleMovesFromPosition2 == expectedMovesFromPosition2);
 
-    std::list<ChessMan> fields;
-    fields = board->boardAttributes.reactionBoard.at("b6");
-    std::list<ChessMan>::iterator fields_itr;
-    for (auto fields_itr = fields.begin(); fields_itr != fields.end(); fields_itr++)
-    {
-        ChessMan insertedChessMan(*fields_itr);
-        ChessMan expectedChessMan(ChessManType::Rook, 'w');
-        BOOST_CHECK(insertedChessMan == expectedChessMan);
-    }
-    BOOST_CHECK(fields.size() == 2);
+    std::list<ChessMan> reactions;
+    reactions = board->boardAttributes.reactionBoard.at("b6");
+    std::list<ChessMan>::iterator reactions_it = reactions.begin();
+
+    ChessMan expectedChessMan1(ChessManType::Rook, 'w', "b2");
+    ChessMan insertedChessMan1(*reactions_it);
+    BOOST_CHECK(insertedChessMan1 == expectedChessMan1);
+
+    std::advance(reactions_it, 1);
+    ChessMan expectedChessMan2(ChessManType::Rook, 'w', "g6");
+    ChessMan insertedChessMan2(*reactions_it);
+    BOOST_CHECK(insertedChessMan2 == expectedChessMan2);
+
+    BOOST_CHECK(reactions.size() == 2);
 }
 
-BOOST_FIXTURE_TEST_CASE(testCheckIsFalseWhenFieldHasNoReactions, FakeBoardAttributesFixture)
+BOOST_FIXTURE_TEST_CASE(testCheckWhenFalseWhenFieldHasNoReactions, FakeBoardAttributesFixture)
 {
     char kingColor('w');
     string kingPosition("a8");
@@ -361,23 +394,23 @@ BOOST_FIXTURE_TEST_CASE(testCheckIsFalseWhenFieldHasNoReactions, FakeBoardAttrib
     bool check(board->Check(kingColor, kingPosition));
     BOOST_CHECK(check == false);
 }
-BOOST_FIXTURE_TEST_CASE(testCheckIsFalseWhenFieldHasReactions, FakeBoardAttributesFixture)
+BOOST_FIXTURE_TEST_CASE(testCheckWhenFalseWhenFieldHasReactions, FakeBoardAttributesFixture)
 {
     char kingColor('w');
     string kingPosition("e1");
 
-    board->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::Rook, 'w');
+    board->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::Rook, 'w', "h1");
     board->CalculateMovesBoardAndReactionBoard();
 
     bool check(board->Check(kingColor, kingPosition));
     BOOST_CHECK(check == false);
 }
-BOOST_FIXTURE_TEST_CASE(testCheckIsTrue, FakeBoardAttributesFixture)
+BOOST_FIXTURE_TEST_CASE(testCheckWhenTrue, FakeBoardAttributesFixture)
 {
     char kingColor('w');
     string kingPosition("e1");
 
-    board->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::Rook, 'b');
+    board->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::Rook, 'b', "h1");
     board->CalculateMovesBoardAndReactionBoard();
 
     bool check(board->Check(kingColor, kingPosition));
@@ -388,24 +421,24 @@ BOOST_FIXTURE_TEST_CASE(testMakeMoveToEmptyField, FakeBoardAttributesFixture)
 {
     board->MakeMove('w', "b2", "b4");
     ChessMan insertedChessMan(board->boardAttributes.boardState.at("b4"));
-    ChessMan expectedChessMan(ChessMan(ChessManType::Rook, 'w'));
+    ChessMan expectedChessMan(ChessMan(ChessManType::Rook, 'w', "b4"));
     BOOST_CHECK(insertedChessMan == expectedChessMan);
 }
 BOOST_FIXTURE_TEST_CASE(testCapture, FakeBoardAttributesFixture)
 {
     board->MakeMove('w', "b2", "b6");
     ChessMan insertedChessMan(board->boardAttributes.boardState.at("b6"));
-    ChessMan expectedChessMan(ChessMan(ChessManType::Rook, 'w'));
+    ChessMan expectedChessMan(ChessMan(ChessManType::Rook, 'w', "b6"));
     BOOST_CHECK(insertedChessMan == expectedChessMan);
 }
 BOOST_FIXTURE_TEST_CASE(testMakeMoveToNotEmptyField, FakeBoardAttributesFixture)
 {
     board->MakeMove('w', "b2", "d2");
     ChessMan insertedChessManD2(board->boardAttributes.boardState.at("d2"));
-    ChessMan expectedChessManD2(ChessMan(ChessManType::Bishop, 'w'));
+    ChessMan expectedChessManD2(ChessMan(ChessManType::Bishop, 'w', "d2"));
     BOOST_CHECK(insertedChessManD2 == expectedChessManD2);
     ChessMan insertedChessManB2(board->boardAttributes.boardState.at("b2"));
-    ChessMan expectedChessManB2(ChessMan(ChessManType::Rook, 'w'));
+    ChessMan expectedChessManB2(ChessMan(ChessManType::Rook, 'w', "b2"));
     BOOST_CHECK(insertedChessManB2 == expectedChessManB2);
 }
 BOOST_FIXTURE_TEST_CASE(testMakeMoveByDifferentColor, FakeBoardAttributesFixture)
@@ -421,62 +454,96 @@ BOOST_FIXTURE_TEST_CASE(testMakeMoveByDifferentColor, FakeBoardAttributesFixture
 ////////////////////////////
 BOOST_FIXTURE_TEST_CASE(testMakeMoveByNotKingCauseCheck, FakeBoardAttributesFixture)
 {
-    board->boardAttributes.boardState.at("a1") = ChessMan(ChessManType::Rook, 'b');
+    board->boardAttributes.boardState.at("a1") = ChessMan(ChessManType::Rook, 'b', "a1");
 
     board->MakeMove('w', "d1", "b3");
     ChessMan insertedChessManF2(board->boardAttributes.boardState.at("b3"));
     ChessMan expectedChessManF2(ChessMan(ChessManType::None, 0));
     BOOST_CHECK(insertedChessManF2 == expectedChessManF2);
     ChessMan insertedChessManF1(board->boardAttributes.boardState.at("d1"));
-    ChessMan expectedChessManF1(ChessMan(ChessManType::Queen, 'w'));
+    ChessMan expectedChessManF1(ChessMan(ChessManType::Queen, 'w', "d1"));
     BOOST_CHECK(insertedChessManF1 == expectedChessManF1);
 }
 BOOST_FIXTURE_TEST_CASE(testMakeMoveByKingCauseCheck, FakeBoardAttributesFixture)
 {
-    board->boardAttributes.boardState.at("c5") = ChessMan(ChessManType::Bishop, 'b');
+    board->boardAttributes.boardState.at("c5") = ChessMan(ChessManType::Bishop, 'b', "c5");
 
     board->MakeMove('w', "e1", "f2");
     ChessMan insertedChessManF2(board->boardAttributes.boardState.at("f2"));
     ChessMan expectedChessManF2(ChessMan(ChessManType::None, 0));
     BOOST_CHECK(insertedChessManF2 == expectedChessManF2);
     ChessMan insertedChessManF1(board->boardAttributes.boardState.at("e1"));
-    ChessMan expectedChessManF1(ChessMan(ChessManType::King, 'w'));
+    ChessMan expectedChessManF1(ChessMan(ChessManType::King, 'w', "e1"));
     BOOST_CHECK(insertedChessManF1 == expectedChessManF1);
 }
 BOOST_FIXTURE_TEST_CASE(testMakeMoveByNotKingWhenCheck, FakeBoardAttributesFixture)
 {
-    board->boardAttributes.boardState.at("h4") = ChessMan(ChessManType::Bishop, 'b');
+    board->boardAttributes.boardState.at("h4") = ChessMan(ChessManType::Bishop, 'b', "h4");
 
     board->MakeMove('w', "d1", "d3");
     ChessMan insertedChessManF2(board->boardAttributes.boardState.at("d3"));
     ChessMan expectedChessManF2(ChessMan(ChessManType::None, 0));
     BOOST_CHECK(insertedChessManF2 == expectedChessManF2);
     ChessMan insertedChessManF1(board->boardAttributes.boardState.at("d1"));
-    ChessMan expectedChessManF1(ChessMan(ChessManType::Queen, 'w'));
+    ChessMan expectedChessManF1(ChessMan(ChessManType::Queen, 'w', "d1"));
     BOOST_CHECK(insertedChessManF1 == expectedChessManF1);
 }
 BOOST_FIXTURE_TEST_CASE(testEscapeByKingWhenCheck, FakeBoardAttributesFixture)
 {
-    board->boardAttributes.boardState.at("h4") = ChessMan(ChessManType::Bishop, 'b');
+    board->boardAttributes.boardState.at("h4") = ChessMan(ChessManType::Bishop, 'b', "h4");
 
     board->MakeMove('w', "e1", "f1");
     ChessMan insertedChessManF2(board->boardAttributes.boardState.at("f1"));
-    ChessMan expectedChessManF2(ChessMan(ChessManType::King, 'w'));
+    ChessMan expectedChessManF2(ChessMan(ChessManType::King, 'w', "f1"));
     BOOST_CHECK(insertedChessManF2 == expectedChessManF2);
     ChessMan insertedChessManF1(board->boardAttributes.boardState.at("e1"));
     ChessMan expectedChessManF1(ChessMan(ChessManType::None, 0));
     BOOST_CHECK(insertedChessManF1 == expectedChessManF1);
 }
+BOOST_FIXTURE_TEST_CASE(testCaptureByKingToAvoidCheck, EmptyBoardFixture)
+{
+    emptyBoard->boardAttributes.boardState.at("e1") = ChessMan(ChessManType::King, 'w', "e1");
+    emptyBoard->boardAttributes.boardState.at("d2") = ChessMan(ChessManType::Pawn, 'w', "d2");
+    emptyBoard->boardAttributes.boardState.at("f2") = ChessMan(ChessManType::Pawn, 'w', "f2");
+
+    emptyBoard->boardAttributes.boardState.at("e2") = ChessMan(ChessManType::Queen, 'b', "e2");
+
+    emptyBoard->MakeMove('w', "e1", "e2");
+    ChessMan insertedChessManF2(emptyBoard->boardAttributes.boardState.at("e2"));
+    ChessMan expectedChessManF2(ChessMan(ChessManType::King, 'w', "e2"));
+    BOOST_CHECK(insertedChessManF2 == expectedChessManF2);
+    ChessMan insertedChessManF1(emptyBoard->boardAttributes.boardState.at("e1"));
+    ChessMan expectedChessManF1(ChessMan(ChessManType::None, 0));
+    BOOST_CHECK(insertedChessManF1 == expectedChessManF1);
+}
+BOOST_FIXTURE_TEST_CASE(testCaptureByKnightToAvoidCheck, EmptyBoardFixture)
+{
+    emptyBoard->boardAttributes.boardState.at("e1") = ChessMan(ChessManType::King, 'w', "e1");
+    emptyBoard->boardAttributes.boardState.at("d2") = ChessMan(ChessManType::Pawn, 'w', "d2");
+    emptyBoard->boardAttributes.boardState.at("f2") = ChessMan(ChessManType::Pawn, 'w', "f2");
+    emptyBoard->boardAttributes.boardState.at("c3") = ChessMan(ChessManType::Knight, 'w', "c3");
+
+    emptyBoard->boardAttributes.boardState.at("e2") = ChessMan(ChessManType::Queen, 'b', "e2");
+
+    emptyBoard->MakeMove('w', "c3", "e2");
+    ChessMan insertedChessManF2(emptyBoard->boardAttributes.boardState.at("e2"));
+    ChessMan expectedChessManF2(ChessMan(ChessManType::Knight, 'w', "e2"));
+    BOOST_CHECK(insertedChessManF2 == expectedChessManF2);
+    ChessMan insertedChessManF1(emptyBoard->boardAttributes.boardState.at("c3"));
+    ChessMan expectedChessManF1(ChessMan(ChessManType::None, 0));
+    BOOST_CHECK(insertedChessManF1 == expectedChessManF1);
+}
+
 
 BOOST_FIXTURE_TEST_CASE(testMakeMoveByQueenToAvoidCheck, FakeBoardFixture)
 {
     fakeBoard->boardAttributes.boardState.at("e7") = ChessMan(ChessManType::None, 0);
     fakeBoard->boardAttributes.boardState.at("d1") = ChessMan(ChessManType::None, 0);
-    fakeBoard->boardAttributes.boardState.at("e4") = ChessMan(ChessManType::Queen, 'w');
+    fakeBoard->boardAttributes.boardState.at("e4") = ChessMan(ChessManType::Queen, 'w', "e4");
 
     fakeBoard->MakeMove('b', "d8", "e7");
     ChessMan insertedChessManF2(fakeBoard->boardAttributes.boardState.at("e7"));
-    ChessMan expectedChessManF2(ChessMan(ChessManType::Queen, 'b'));
+    ChessMan expectedChessManF2(ChessMan(ChessManType::Queen, 'b', "e7"));
     BOOST_CHECK(insertedChessManF2 == expectedChessManF2);
     ChessMan insertedChessManF1(fakeBoard->boardAttributes.boardState.at("d8"));
     ChessMan expectedChessManF1(ChessMan(ChessManType::None, 0));
@@ -486,11 +553,11 @@ BOOST_FIXTURE_TEST_CASE(testMakeMoveByBishopToAvoidCheck, FakeBoardFixture)
 {
     fakeBoard->boardAttributes.boardState.at("d7") = ChessMan(ChessManType::None, 0);
     fakeBoard->boardAttributes.boardState.at("f1") = ChessMan(ChessManType::None, 0);
-    fakeBoard->boardAttributes.boardState.at("a4") = ChessMan(ChessManType::Bishop, 'w');
+    fakeBoard->boardAttributes.boardState.at("a4") = ChessMan(ChessManType::Bishop, 'w', "a4");
 
     fakeBoard->MakeMove('b', "c8", "d7");
     ChessMan insertedChessManF2(fakeBoard->boardAttributes.boardState.at("d7"));
-    ChessMan expectedChessManF2(ChessMan(ChessManType::Bishop, 'b'));
+    ChessMan expectedChessManF2(ChessMan(ChessManType::Bishop, 'b', "d7"));
     BOOST_CHECK(insertedChessManF2 == expectedChessManF2);
     ChessMan insertedChessManF1(fakeBoard->boardAttributes.boardState.at("c8"));
     ChessMan expectedChessManF1(ChessMan(ChessManType::None, 0));
@@ -500,13 +567,13 @@ BOOST_FIXTURE_TEST_CASE(testCaptureByPawnToAvoidCheck, FakeBoardFixture)
 {
     fakeBoard->boardAttributes.boardState.at("d7") = ChessMan(ChessManType::None, 0);
     fakeBoard->boardAttributes.boardState.at("f1") = ChessMan(ChessManType::None, 0);
-    fakeBoard->boardAttributes.boardState.at("b5") = ChessMan(ChessManType::Bishop, 'w');
+    fakeBoard->boardAttributes.boardState.at("b5") = ChessMan(ChessManType::Bishop, 'w', "b5");
     fakeBoard->boardAttributes.boardState.at("a7") = ChessMan(ChessManType::None, 0);
-    fakeBoard->boardAttributes.boardState.at("a6") = ChessMan(ChessManType::Pawn, 'b');
+    fakeBoard->boardAttributes.boardState.at("a6") = ChessMan(ChessManType::Pawn, 'b', "a6");
 
     fakeBoard->MakeMove('b', "a6", "b5");
     ChessMan insertedChessManF2(fakeBoard->boardAttributes.boardState.at("b5"));
-    ChessMan expectedChessManF2(ChessMan(ChessManType::Pawn, 'b'));
+    ChessMan expectedChessManF2(ChessMan(ChessManType::Pawn, 'b', "b5"));
     BOOST_CHECK(insertedChessManF2 == expectedChessManF2);
     ChessMan insertedChessManF1(fakeBoard->boardAttributes.boardState.at("a6"));
     ChessMan expectedChessManF1(ChessMan(ChessManType::None, 0));
@@ -604,7 +671,7 @@ BOOST_FIXTURE_TEST_CASE(testFindCastlingWhenKingIsChecked, FakeBoardFixture)
     fakeBoard->boardAttributes.boardState.at("c8") = ChessMan(ChessManType::None, 0);
     fakeBoard->boardAttributes.boardState.at("b8") = ChessMan(ChessManType::None, 0);
 
-    fakeBoard->boardAttributes.boardState.at("f6") = ChessMan(ChessManType::Knight, 'w');
+    fakeBoard->boardAttributes.boardState.at("f6") = ChessMan(ChessManType::Knight, 'w', "f6");
 
     char rookFileForCastling(0);
 
@@ -619,7 +686,7 @@ BOOST_FIXTURE_TEST_CASE(testFindCastlingsWhenCastlingFieldIsCheckedVariant1, Fak
     fakeBoard->boardAttributes.boardState.at("f8") = ChessMan(ChessManType::None, 0);
     fakeBoard->boardAttributes.boardState.at("g7") = ChessMan(ChessManType::None, 0);
 
-    fakeBoard->boardAttributes.boardState.at("g5") = ChessMan(ChessManType::Rook, 'w');
+    fakeBoard->boardAttributes.boardState.at("g5") = ChessMan(ChessManType::Rook, 'w', "g5");
 
     char rookFileForCastling(0);
 
@@ -634,7 +701,7 @@ BOOST_FIXTURE_TEST_CASE(testFindCastlingsWhenCastlingFieldIsCheckedVariant2, Fak
     fakeBoard->boardAttributes.boardState.at("f8") = ChessMan(ChessManType::None, 0);
     fakeBoard->boardAttributes.boardState.at("f7") = ChessMan(ChessManType::None, 0);
 
-    fakeBoard->boardAttributes.boardState.at("f5") = ChessMan(ChessManType::Rook, 'w');
+    fakeBoard->boardAttributes.boardState.at("f5") = ChessMan(ChessManType::Rook, 'w', "f5");
 
     char rookFileForCastling(0);
 
@@ -653,9 +720,9 @@ BOOST_FIXTURE_TEST_CASE(testMakeCastlingForRookOnFileA, FakeBoardFixture)
     fakeBoard->MakeCastling('w', 'a', '1');
 
     ChessMan insertedKing(fakeBoard->boardAttributes.boardState.at("b1"));
-    ChessMan expectedKing(ChessMan(ChessManType::King, 'w'));
+    ChessMan expectedKing(ChessMan(ChessManType::King, 'w', "b1"));
     ChessMan insertedRook(fakeBoard->boardAttributes.boardState.at("c1"));
-    ChessMan expectedRook(ChessMan(ChessManType::Rook, 'w'));
+    ChessMan expectedRook(ChessMan(ChessManType::Rook, 'w', "c1"));
 
     BOOST_CHECK(insertedKing == expectedKing);
     BOOST_CHECK(insertedRook == expectedRook);
@@ -668,9 +735,9 @@ BOOST_FIXTURE_TEST_CASE(testMakeCastlingForRookOnFileH, FakeBoardFixture)
     fakeBoard->MakeCastling('w', 'h', '1');
 
     ChessMan insertedKing(fakeBoard->boardAttributes.boardState.at("g1"));
-    ChessMan expectedKing(ChessMan(ChessManType::King, 'w'));
+    ChessMan expectedKing(ChessMan(ChessManType::King, 'w', "g1"));
     ChessMan insertedRook(fakeBoard->boardAttributes.boardState.at("f1"));
-    ChessMan expectedRook(ChessMan(ChessManType::Rook, 'w'));
+    ChessMan expectedRook(ChessMan(ChessManType::Rook, 'w', "f1"));
 
     BOOST_CHECK(insertedKing == expectedKing);
     BOOST_CHECK(insertedRook == expectedRook);
@@ -679,64 +746,97 @@ BOOST_FIXTURE_TEST_CASE(testMakeCastlingForRookOnFileH, FakeBoardFixture)
 ////////////////////////////
 // CheckMate tests for Board
 ////////////////////////////
-BOOST_FIXTURE_TEST_CASE(testCheckMateIfTrueVariant1, EmptyBoardFixture)
+BOOST_FIXTURE_TEST_CASE(testCheckMateWhenTrueVariant1, EmptyBoardFixture)
 {
     char playerColor('w');
 
-    emptyBoard->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::King, 'w');
+    emptyBoard->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::King, 'w', "h1");
     emptyBoard->boardAttributes.kingsPositions.at(playerColor) = "h1";
 
-    emptyBoard->boardAttributes.boardState.at("g2") = ChessMan(ChessManType::Queen, 'b');
-    emptyBoard->boardAttributes.boardState.at("e3") = ChessMan(ChessManType::Knight, 'b');
+    emptyBoard->boardAttributes.boardState.at("g2") = ChessMan(ChessManType::Queen, 'b', "g2");
+    emptyBoard->boardAttributes.boardState.at("e3") = ChessMan(ChessManType::Knight, 'b', "e3");
 
     emptyBoard->CalculateMovesBoardAndReactionBoard();
     bool checkMate(emptyBoard->CheckMate(playerColor));
     
     BOOST_CHECK(checkMate == true);
 }
-BOOST_FIXTURE_TEST_CASE(testCheckMateIfTrueVariant2, EmptyBoardFixture)
+BOOST_FIXTURE_TEST_CASE(testCheckMateWhenTrueVariant2, EmptyBoardFixture)
 {
     char playerColor('w');
 
-    emptyBoard->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::King, 'w');
+    emptyBoard->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::King, 'w', "h1");
     emptyBoard->boardAttributes.kingsPositions.at(playerColor) = "h1";
-    emptyBoard->boardAttributes.boardState.at("a2") = ChessMan(ChessManType::Rook, 'w');
+    emptyBoard->boardAttributes.boardState.at("a2") = ChessMan(ChessManType::Rook, 'w', "a2");
 
-    emptyBoard->boardAttributes.boardState.at("g2") = ChessMan(ChessManType::Queen, 'b');
-    emptyBoard->boardAttributes.boardState.at("e3") = ChessMan(ChessManType::Knight, 'b');
-    emptyBoard->boardAttributes.boardState.at("h4") = ChessMan(ChessManType::Rook, 'b');
+    emptyBoard->boardAttributes.boardState.at("g2") = ChessMan(ChessManType::Queen, 'b', "g2");
+    emptyBoard->boardAttributes.boardState.at("e3") = ChessMan(ChessManType::Knight, 'b', "e3");
+    emptyBoard->boardAttributes.boardState.at("h4") = ChessMan(ChessManType::Rook, 'b', "h4");
 
     emptyBoard->CalculateMovesBoardAndReactionBoard();
     bool checkMate(emptyBoard->CheckMate(playerColor));
 
     BOOST_CHECK(checkMate == true);
 }
-BOOST_FIXTURE_TEST_CASE(testCheckMateIfFalseVariant1, EmptyBoardFixture)
+BOOST_FIXTURE_TEST_CASE(testCheckMateWhenTrueVariant3, EmptyBoardFixture)
 {
     char playerColor('w');
 
-    emptyBoard->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::King, 'w');
-    emptyBoard->boardAttributes.kingsPositions.at(playerColor) = "h1";
-    emptyBoard->boardAttributes.boardState.at("a2") = ChessMan(ChessManType::Rook, 'w');
+    emptyBoard->boardAttributes.boardState.at("a2") = ChessMan(ChessManType::Pawn, 'w', "a2");
+    emptyBoard->boardAttributes.boardState.at("b2") = ChessMan(ChessManType::Pawn, 'w', "b2");
+    emptyBoard->boardAttributes.boardState.at("a1") = ChessMan(ChessManType::King, 'w', "a1");
+    emptyBoard->boardAttributes.kingsPositions.at(playerColor) = "a1";
 
-    emptyBoard->boardAttributes.boardState.at("g2") = ChessMan(ChessManType::Queen, 'b');
-    emptyBoard->boardAttributes.boardState.at("e3") = ChessMan(ChessManType::Knight, 'b');
+    emptyBoard->boardAttributes.boardState.at("e1") = ChessMan(ChessManType::Rook, 'b', "e1");
+
+    emptyBoard->CalculateMovesBoardAndReactionBoard();
+    bool checkMate(emptyBoard->CheckMate(playerColor));
+
+    BOOST_CHECK(checkMate == true);
+}
+BOOST_FIXTURE_TEST_CASE(testCheckMateWhenFalseVariant1, EmptyBoardFixture)
+{
+    char playerColor('w');
+
+    emptyBoard->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::King, 'w', "h1");
+    emptyBoard->boardAttributes.kingsPositions.at(playerColor) = "h1";
+    emptyBoard->boardAttributes.boardState.at("a2") = ChessMan(ChessManType::Rook, 'w', "a2");
+
+    emptyBoard->boardAttributes.boardState.at("g2") = ChessMan(ChessManType::Queen, 'b', "g2");
+    emptyBoard->boardAttributes.boardState.at("e3") = ChessMan(ChessManType::Knight, 'b', "e3");
 
     emptyBoard->CalculateMovesBoardAndReactionBoard();
     bool checkMate(emptyBoard->CheckMate(playerColor));
 
     BOOST_CHECK(checkMate == false);
 }
-BOOST_FIXTURE_TEST_CASE(testCheckMateIfFalseVariant2, EmptyBoardFixture)
+BOOST_FIXTURE_TEST_CASE(testCheckMateWhenFalseVariant2, EmptyBoardFixture)
 {
     char playerColor('w');
 
-    emptyBoard->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::King, 'w');
+    emptyBoard->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::King, 'w', "h1");
     emptyBoard->boardAttributes.kingsPositions.at(playerColor) = "h1";
-    emptyBoard->boardAttributes.boardState.at("a2") = ChessMan(ChessManType::Rook, 'w');
+    emptyBoard->boardAttributes.boardState.at("a2") = ChessMan(ChessManType::Rook, 'w', "a2");
 
-    emptyBoard->boardAttributes.boardState.at("h4") = ChessMan(ChessManType::Rook, 'b');
-    emptyBoard->boardAttributes.boardState.at("e3") = ChessMan(ChessManType::Knight, 'b');
+    emptyBoard->boardAttributes.boardState.at("h4") = ChessMan(ChessManType::Rook, 'b', "h4");
+    emptyBoard->boardAttributes.boardState.at("e3") = ChessMan(ChessManType::Knight, 'b', "e3");
+
+    emptyBoard->CalculateMovesBoardAndReactionBoard();
+    bool checkMate(emptyBoard->CheckMate(playerColor));
+
+    BOOST_CHECK(checkMate == false);
+}
+BOOST_FIXTURE_TEST_CASE(testCheckMateWhenFalseVariant3, EmptyBoardFixture)
+{
+    char playerColor('w');
+
+    emptyBoard->boardAttributes.boardState.at("a2") = ChessMan(ChessManType::Pawn, 'w', "a2");
+    emptyBoard->boardAttributes.boardState.at("b2") = ChessMan(ChessManType::Pawn, 'w', "b2");
+    emptyBoard->boardAttributes.boardState.at("a1") = ChessMan(ChessManType::King, 'w', "a1");
+    emptyBoard->boardAttributes.kingsPositions.at(playerColor) = "a1";
+    emptyBoard->boardAttributes.boardState.at("e4") = ChessMan(ChessManType::Rook, 'w', "e4");
+
+    emptyBoard->boardAttributes.boardState.at("e1") = ChessMan(ChessManType::Rook, 'b', "e1");
 
     emptyBoard->CalculateMovesBoardAndReactionBoard();
     bool checkMate(emptyBoard->CheckMate(playerColor));
@@ -744,6 +844,31 @@ BOOST_FIXTURE_TEST_CASE(testCheckMateIfFalseVariant2, EmptyBoardFixture)
     BOOST_CHECK(checkMate == false);
 }
 
+/////////////////////////////
+// Tests for Pawn on end line
+/////////////////////////////
+BOOST_FIXTURE_TEST_CASE(testPawnOnEndLineWhenQueenSelected, EmptyBoardFixture)
+{
+    emptyBoard->boardAttributes.boardState.at("d7") = ChessMan(ChessManType::Pawn, 'w', "d7");
+
+    emptyBoard->MakeMove('w', "d7", "d8", "1");
+
+    ChessMan insertedChessMan(emptyBoard->boardAttributes.boardState.at("d8"));
+    ChessMan expectedChessMan(ChessMan(ChessManType::Queen, 'w', "d8"));
+
+    BOOST_CHECK(insertedChessMan == expectedChessMan);
+}
+BOOST_FIXTURE_TEST_CASE(testPawnOnEndLineWhenRookSelected, EmptyBoardFixture)
+{
+    emptyBoard->boardAttributes.boardState.at("b2") = ChessMan(ChessManType::Pawn, 'b', "b2");
+
+    emptyBoard->MakeMove('b', "b2", "b1", "2");
+
+    ChessMan insertedChessMan(emptyBoard->boardAttributes.boardState.at("b1"));
+    ChessMan expectedChessMan(ChessMan(ChessManType::Rook, 'b', "b1"));
+
+    BOOST_CHECK(insertedChessMan == expectedChessMan);
+}
 BOOST_AUTO_TEST_SUITE_END()
 
 
@@ -819,33 +944,48 @@ BOOST_FIXTURE_TEST_CASE(testCastlingWhenOneCastling, FakeBoardFixture)
     fakeGameplay->Castling('w');
 
     ChessMan insertedKing(fakeGameplay->board.boardAttributes.boardState.at("b1"));
-    ChessMan expectedKing(ChessMan(ChessManType::King, 'w'));
+    ChessMan expectedKing(ChessMan(ChessManType::King, 'w', "b1"));
     ChessMan insertedRook(fakeGameplay->board.boardAttributes.boardState.at("c1"));
-    ChessMan expectedRook(ChessMan(ChessManType::Rook, 'w'));
+    ChessMan expectedRook(ChessMan(ChessManType::Rook, 'w', "c1"));
 
     BOOST_CHECK(insertedKing == expectedKing);
     BOOST_CHECK(insertedRook == expectedRook);
 }
-BOOST_FIXTURE_TEST_CASE(testCastlingWhenTwoCastlings, FakeBoardFixture)
+BOOST_FIXTURE_TEST_CASE(testCastlingWhenTwoCastlingsWhenChoiceIsA, FakeBoardFixture)
 {
-    //    TODO mock input
+    fakeGameplay->board.boardAttributes.boardState.at("b1") = ChessMan(ChessManType::None, 0);
+    fakeGameplay->board.boardAttributes.boardState.at("c1") = ChessMan(ChessManType::None, 0);
+    fakeGameplay->board.boardAttributes.boardState.at("d1") = ChessMan(ChessManType::None, 0);
+    fakeGameplay->board.boardAttributes.boardState.at("f1") = ChessMan(ChessManType::None, 0);
+    fakeGameplay->board.boardAttributes.boardState.at("g1") = ChessMan(ChessManType::None, 0);
 
-    //board->boardAttributes.boardState.at("d1") = ChessMan(ChessManType::None, 0);
-    //board->boardAttributes.boardState.at("b2") = ChessMan(ChessManType::None, 0);
-    //board->boardAttributes.boardState.at("a1") = ChessMan(ChessManType::Rook, 'w');
+    fakeGameplay->Castling('w', "a");
 
-    //board->boardAttributes.boardState.at("g6") = ChessMan(ChessManType::None, 0);
-    //board->boardAttributes.boardState.at("h1") = ChessMan(ChessManType::Rook, 'w');
+    ChessMan insertedKing(fakeGameplay->board.boardAttributes.boardState.at("b1"));
+    ChessMan expectedKing(ChessMan(ChessManType::King, 'w', "b1"));
+    ChessMan insertedRook(fakeGameplay->board.boardAttributes.boardState.at("c1"));
+    ChessMan expectedRook(ChessMan(ChessManType::Rook, 'w', "c1"));
 
-    //gameplay->Castling('w');
+    BOOST_CHECK(insertedKing == expectedKing);
+    BOOST_CHECK(insertedRook == expectedRook);
+}
+BOOST_FIXTURE_TEST_CASE(testCastlingWhenTwoCastlingsWhenChoiceIsH, FakeBoardFixture)
+{
+    fakeGameplay->board.boardAttributes.boardState.at("b1") = ChessMan(ChessManType::None, 0);
+    fakeGameplay->board.boardAttributes.boardState.at("c1") = ChessMan(ChessManType::None, 0);
+    fakeGameplay->board.boardAttributes.boardState.at("d1") = ChessMan(ChessManType::None, 0);
+    fakeGameplay->board.boardAttributes.boardState.at("f1") = ChessMan(ChessManType::None, 0);
+    fakeGameplay->board.boardAttributes.boardState.at("g1") = ChessMan(ChessManType::None, 0);
 
-    //ChessMan insertedKing(gameplay->board.boardAttributes.boardState.at("g1"));
-    //ChessMan expectedKing(ChessMan(ChessManType::King, 'w'));
-    //ChessMan insertedRook(gameplay->board.boardAttributes.boardState.at("f1"));
-    //ChessMan expectedRook(ChessMan(ChessManType::Rook, 'w'));
+    fakeGameplay->Castling('w', "h");
 
-    //BOOST_CHECK(insertedKing == expectedKing);
-    //BOOST_CHECK(insertedRook == expectedRook);
+    ChessMan insertedKing(fakeGameplay->board.boardAttributes.boardState.at("g1"));
+    ChessMan expectedKing(ChessMan(ChessManType::King, 'w', "g1"));
+    ChessMan insertedRook(fakeGameplay->board.boardAttributes.boardState.at("f1"));
+    ChessMan expectedRook(ChessMan(ChessManType::Rook, 'w', "f1"));
+
+    BOOST_CHECK(insertedKing == expectedKing);
+    BOOST_CHECK(insertedRook == expectedRook);
 }
 
 BOOST_FIXTURE_TEST_CASE(testCastlingWhenKingWasMoved, FakeBoardFixture)
@@ -890,7 +1030,7 @@ BOOST_FIXTURE_TEST_CASE(testCastlingWhenKingIsChecked, FakeBoardFixture)
     fakeGameplay->board.boardAttributes.boardState.at("d1") = ChessMan(ChessManType::None, 0);
 
     fakeGameplay->board.boardAttributes.boardState.at("e2") = ChessMan(ChessManType::None, 0);
-    fakeGameplay->board.boardAttributes.boardState.at("e5") = ChessMan(ChessManType::Rook, 'b');
+    fakeGameplay->board.boardAttributes.boardState.at("e5") = ChessMan(ChessManType::Rook, 'b', "e5");
 
     fakeGameplay->Castling('w');
 
@@ -909,7 +1049,7 @@ BOOST_FIXTURE_TEST_CASE(testCastlingWhenCastlingFieldsIsChecked, FakeBoardFixtur
     fakeGameplay->board.boardAttributes.boardState.at("d1") = ChessMan(ChessManType::None, 0);
 
     fakeGameplay->board.boardAttributes.boardState.at("d2") = ChessMan(ChessManType::None, 0);
-    fakeGameplay->board.boardAttributes.boardState.at("d5") = ChessMan(ChessManType::Rook, 'b');
+    fakeGameplay->board.boardAttributes.boardState.at("d5") = ChessMan(ChessManType::Rook, 'b', "d5");
 
     fakeGameplay->Castling('w');
 
@@ -925,8 +1065,20 @@ BOOST_FIXTURE_TEST_CASE(testCastlingWhenCastlingFieldsIsChecked, FakeBoardFixtur
 ///////////////////////////////
 // CheckMate tests for Gameplay
 ///////////////////////////////
-BOOST_FIXTURE_TEST_CASE(testCheckMateVariant1, FakeBoardAttributesFixture)
+BOOST_FIXTURE_TEST_CASE(testCheckMateVariant1, EmptyBoardFixture)
 {
-    //TODO finish this test
+    char playerColor = 'w';
+
+    emptyGameplay->board.boardAttributes.boardState.at("d1") = ChessMan(ChessManType::King, 'b', "d1");
+    emptyGameplay->board.boardAttributes.kingsPositions.at(playerColor) = "d1";
+
+    emptyGameplay->board.boardAttributes.boardState.at("e1") = ChessMan(ChessManType::Queen, 'w', "e1");
+    emptyGameplay->board.boardAttributes.boardState.at("a5") = ChessMan(ChessManType::Bishop, 'w', "a5");
+    emptyGameplay->board.boardAttributes.boardState.at("g6") = ChessMan(ChessManType::Bishop, 'w', "g6");
+
+    emptyGameplay->board.CalculateMovesBoardAndReactionBoardWithoutKings();
+    bool checkMate(emptyGameplay->SwitchPlayerAndLookForCheckMateOrCheck(playerColor));
+
+    BOOST_CHECK(checkMate == true);
 }
 BOOST_AUTO_TEST_SUITE_END()

@@ -19,16 +19,16 @@ bool UpdateAttributes::LookForPossibleMoveAndUpdateReactionBoard(
 {
     ChessMan checkedField(boardState.at(possiblePosition));
     std::list<string>& possibleMoves(movesBoard.at(actualPosition));
+
+    UpdateReactionBoard(reactionBoard, possiblePosition, movedChessMan);
     if (checkedField.GetType() != ChessManType::None)
     {
         if (checkedField.GetColor() == movedChessMan.GetColor()) return true;
 
         possibleMoves.push_back(possiblePosition);
-        UpdateReactionBoard(reactionBoard, possiblePosition, movedChessMan);
         return true;
     }
     possibleMoves.push_back(possiblePosition);
-    UpdateReactionBoard(reactionBoard, possiblePosition, movedChessMan);
     return false;
 }
 

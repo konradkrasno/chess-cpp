@@ -20,13 +20,10 @@ void KingMoves::CheckKingStraightMovesAndUpdateReactionBoard(
 	string const rank_range
 )
 {
-    int step(1);
+    int i(1);
 	int fileIndex(file_range.find(file));
-	int rankIndex(rank_range.find(rank));
 	auto file_it = file_range.begin() + fileIndex + 1;
-	auto rank_it = rank_range.begin() + rankIndex + 1;
-
-	for (file_it, step; file_it != file_range.end() && step < 2; file_it++, step++)
+	for (file_it, i; file_it != file_range.end() && i < 2; file_it++, i++)
     {
         string possiblePosition(ConvertFileAndRankToPosition(*file_it, rank));
 
@@ -41,7 +38,10 @@ void KingMoves::CheckKingStraightMovesAndUpdateReactionBoard(
             break;
     }
 
-    for (rank_it, step; rank_it != rank_range.end() && step < 2; rank_it++, step++)
+	int j(1);
+	int rankIndex(rank_range.find(rank));
+	auto rank_it = rank_range.begin() + rankIndex + 1;
+    for (rank_it, j; rank_it != rank_range.end() && j < 2; rank_it++, j++)
     {
         string possiblePosition(ConvertFileAndRankToPosition(file, *rank_it));
 
