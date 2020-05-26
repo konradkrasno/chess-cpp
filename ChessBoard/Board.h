@@ -51,7 +51,7 @@ public:
     void DrawBoard(char const playerColor, bool const invertTable) const;
     ChessMan FindChessManOnBoard(char const file, char const rank) const;
     void CalculateMovesBoardAndReactionBoard();
-    void CalculateMovesBoardAndReactionBoardWithoutKings();
+    void CalculateMovesBoardAndReactionBoardWithNeutralKings();
     bool Check(char const kingColor, string const kingPosition);
     bool CheckMate(char const kingColor);
     bool MakeMove(char const playerColor, string const actualPosition, string const newPosition, string test_input="default");

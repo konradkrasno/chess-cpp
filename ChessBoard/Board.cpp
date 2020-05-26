@@ -135,7 +135,7 @@ void Board::CalculateMovesBoardAndReactionBoard()
     }
 }
 
-void Board::CalculateMovesBoardAndReactionBoardWithoutKings()
+void Board::CalculateMovesBoardAndReactionBoardWithNeutralKings()
 {
     string whiteKingPosition(boardAttributes.kingsPositions.at('w'));
     ChessMan& whiteKingField(boardAttributes.boardState.at(whiteKingPosition));
@@ -147,17 +147,38 @@ void Board::CalculateMovesBoardAndReactionBoardWithoutKings()
 
     whiteKingField = ChessMan(ChessManType::None, 0);
     blackKingField = ChessMan(ChessManType::None, 0);
+
     CalculateMovesBoardAndReactionBoard();
+
     whiteKingField = copyWhiteKing;
     blackKingField = copyBlackKing;
+
+    KingPossibleMoves(
+        boardAttributes.boardState,
+        boardAttributes.movesBoard,
+        boardAttributes.reactionBoard,
+        whiteKingPosition,
+        whiteKingField,
+        whiteKingPosition[0],
+        whiteKingPosition[1]
+    );
+    KingPossibleMoves(
+        boardAttributes.boardState,
+        boardAttributes.movesBoard,
+        boardAttributes.reactionBoard,
+        blackKingPosition,
+        blackKingField,
+        blackKingPosition[0],
+        blackKingPosition[1]
+    );
 }
 
 bool Board::Check(char const kingColor, string const kingPosition)
 {
     std::list<ChessMan> kingFieldReactions(boardAttributes.reactionBoard.at(kingPosition));
-    for (std::list<ChessMan>::iterator king_it = kingFieldReactions.begin(); king_it != kingFieldReactions.end(); king_it++)
+    for (std::list<ChessMan>::iterator kingReactions_it = kingFieldReactions.begin(); kingReactions_it != kingFieldReactions.end(); kingReactions_it++)
     {
-        char reactingChessManColor(king_it->GetColor());
+        char reactingChessManColor(kingReactions_it->GetColor());
         if (reactingChessManColor != kingColor)
         {
             return true;
@@ -177,7 +198,6 @@ bool Board::CheckMate(char const kingColor)
     {
         kingIsCheck = true;
     }
-
     std::list<string> kingMoves(boardAttributes.movesBoard.at(kingPosition));
     for (std::list<string>::iterator kingMoves_it = kingMoves.begin(); kingMoves_it != kingMoves.end(); kingMoves_it++)
     {
@@ -261,7 +281,7 @@ bool Board::MakeMove(char const playerColor, string const actualPosition, string
 
                 if (copy_actualPositionChessMan.GetType() == ChessManType::King) kingPosition = newPosition;
 
-                CalculateMovesBoardAndReactionBoardWithoutKings();
+                CalculateMovesBoardAndReactionBoardWithNeutralKings();
                 if (Check(playerColor, kingPosition))
                 {
                     cout << "Move is not allowed. The King is checked!" << endl;
@@ -338,7 +358,7 @@ bool Board::PawnOnEndLine(
     }
     newPositionChessMan.ChangePosition(newPosition);
 
-    CalculateMovesBoardAndReactionBoardWithoutKings();
+    CalculateMovesBoardAndReactionBoardWithNeutralKings();
     if (Check(playerColor, kingPosition))
     {
         cout << "Move is not allowed. The King is checked!" << endl;
@@ -405,7 +425,7 @@ int Board::FindCastlings(char const playerColor, char& rookFileForCastling, char
     string empty_files_rookA("bcd");
     string empty_files_rookH("fg");
 
-    CalculateMovesBoardAndReactionBoardWithoutKings();
+    CalculateMovesBoardAndReactionBoardWithNeutralKings();
 
     if (NotFirstMove(king_file, castlingRank))
     {
@@ -456,5 +476,5 @@ void Board::MakeCastling(char const playerColor, char const rookFile, char const
     newKingPositionField.ChangeFirstMove();
     actualKingPositionField = ChessMan(ChessManType::None, 0);
 
-    CalculateMovesBoardAndReactionBoardWithoutKings();
+    CalculateMovesBoardAndReactionBoardWithNeutralKings();
 }

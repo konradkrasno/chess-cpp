@@ -8,9 +8,7 @@ Move::~Move()
 {
 }
 
-void Move::ChessManPossibleMoves(
-    string const actualPosition
-)
+void Move::ChessManPossibleMoves(string const actualPosition)
 {
     std::list<string> possibleMoves;
     char file(actualPosition[0]);

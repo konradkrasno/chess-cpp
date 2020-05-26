@@ -19,7 +19,5 @@ public:
     Move();
     ~Move();
     BoardAttributes boardAttributes;
-    void ChessManPossibleMoves(
-        string const actual_position
-    );
+    void ChessManPossibleMoves(string const actualPosition);
 };

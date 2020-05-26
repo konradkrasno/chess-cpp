@@ -17,7 +17,7 @@ bool PawnMoves::LookForPawnPossibleMoves(
 {
     ChessMan checkedField(boardState.at(possiblePosition));
     std::list<string>& possibleMoves(movesBoard.at(actualPosition));
-    if (checkedField.GetType() == ChessManType::None)
+    if (checkedField.GetColor() == 0)
     {
         possibleMoves.push_back(possiblePosition);
         return false;
@@ -36,7 +36,7 @@ void PawnMoves::LookForPawnPossibleCaptureAndUpdateReactionBoard(
 {
     ChessMan checkedField(boardState.at(possiblePosition));
     std::list<string>& possibleMoves(movesBoard.at(actualPosition));
-    if (checkedField.GetType() != ChessManType::None)
+    if (checkedField.GetColor() != 0)
     {
         if (checkedField.GetColor() != movedChessMan.GetColor())
         {

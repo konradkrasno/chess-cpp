@@ -21,7 +21,7 @@ bool UpdateAttributes::LookForPossibleMoveAndUpdateReactionBoard(
     std::list<string>& possibleMoves(movesBoard.at(actualPosition));
 
     UpdateReactionBoard(reactionBoard, possiblePosition, movedChessMan);
-    if (checkedField.GetType() != ChessManType::None)
+    if (checkedField.GetColor() != 0)
     {
         if (checkedField.GetColor() == movedChessMan.GetColor()) return true;
 
