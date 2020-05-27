@@ -6,37 +6,37 @@ ChessMan::ChessMan(ChessManType const type, char const color, string position) :
 	switch (_type)
 	{
 	case ChessManType::None:
-		_symbol += "None";
+		_symbol += "none";
 		_firstMove = false;
 		break;
 	case ChessManType::Rook:
-		_symbol += _color;
-		_symbol += "R";
+		if (color == 'w') _symbol = "♜";
+		else _symbol = "♖";
 		_firstMove = true;
 		break;
 	case ChessManType::Knight:
-		_symbol += _color;
-		_symbol += "Kn";
+		if (color == 'w') _symbol = "♞";
+		else _symbol = "♘";
 		_firstMove = false;
 		break;
 	case ChessManType::Bishop:
-		_symbol += _color;
-		_symbol += "B";
+		if (color == 'w') _symbol = "♝";
+		else _symbol = "♗";
 		_firstMove = false;
 		break;
 	case ChessManType::Queen:
-		_symbol += _color;
-		_symbol += "Q";
+		if (color == 'w') _symbol = "♛";
+		else _symbol = "♕";
 		_firstMove = false;
 		break;
 	case ChessManType::King:
-		_symbol += _color;
-		_symbol += "Ki";
+		if (color == 'w') _symbol = "♚";
+		else _symbol = "♔";
 		_firstMove = true;
 		break;
 	case ChessManType::Pawn:
-		_symbol += _color;
-		_symbol += "p";
+		if (color == 'w') _symbol = "♟";
+		else _symbol = "♙";
 		_firstMove = true;
 		if (_color == 'w') _moveDirection = "increase";
 		else _moveDirection = "decrease";

@@ -17,26 +17,19 @@ void Board::_DrawMiddle(LineType const lineType, char file, string chessManSymbo
     switch (lineType)
     {
     case LineType::FileHeader:
-        cout << "  " << file << "    ";
+        cout << "  " << file << "   ";
         break;
     case LineType::TopHorizontalLine:
-        cout << " ______";
+        cout << " _____";
         break;
     case LineType::VerticalLines:
-        cout << "|" << "      ";
+        cout << "|" << "     ";
         break;
     case LineType::ChessManPlace:
-        if (chessManSymbol.length() == 2) 
-        {
-            cout << "|" << "  " << chessManSymbol << "  ";
-        }
-        else
-        {
-            cout << "|" << "  " << chessManSymbol << " ";
-        }
+        cout << "|" << "  " << chessManSymbol << "  ";
         break;
     case LineType::VerticalAndHorizontalLines:
-        cout << "|" << "______";
+        cout << "|" << "_____";
         break;
     default:
         break;
@@ -78,7 +71,7 @@ void Board::_DrawEntirePositionLine(string fileRange, char rank) const
     for (char const& file : fileRange)
     {
         string chessManOnCurrentPositionSymbol(FindChessManOnBoard(file, rank).GetSymbol());
-        if (chessManOnCurrentPositionSymbol != "None")
+        if (chessManOnCurrentPositionSymbol != "none")
         {
             Board::_DrawMiddle(LineType::ChessManPlace, 0, chessManOnCurrentPositionSymbol);
         }
