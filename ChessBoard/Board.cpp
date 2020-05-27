@@ -191,6 +191,9 @@ bool Board::CheckMate(char const kingColor)
     {
         kingIsCheck = true;
     }
+
+    if (!kingIsCheck) return false;
+
     std::list<string> kingMoves(boardAttributes.movesBoard.at(kingPosition));
     for (std::list<string>::iterator kingMoves_it = kingMoves.begin(); kingMoves_it != kingMoves.end(); kingMoves_it++)
     {
@@ -200,6 +203,8 @@ bool Board::CheckMate(char const kingColor)
             break;
         }
     }
+
+    if (!allKingMovesIsChecked) return false;
 
     int count(0);
     std::list<ChessMan> reactingChessMen(boardAttributes.reactionBoard.at(kingPosition));
@@ -242,11 +247,9 @@ bool Board::CheckMate(char const kingColor)
         checkingChessManNotCaptured = true;
     }
 
-    if (kingIsCheck == true && allKingMovesIsChecked == true && checkingChessManNotCaptured == true)
-    {
-        return true;
-    }
-    return false;
+    if (!checkingChessManNotCaptured) return false;
+
+    return true;
 }
 
 bool Board::MakeMove(char const playerColor, string const actualPosition, string const newPosition, string test_input)
