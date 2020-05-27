@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 using std::cout;
 using std::endl;
 #define BOOST_TEST_MODULE testChess
@@ -320,11 +320,6 @@ BOOST_AUTO_TEST_SUITE_END()
 
 
 BOOST_AUTO_TEST_SUITE(ChessManSuite)
-BOOST_AUTO_TEST_CASE(testGetSymbol)
-{
-    ChessMan whiteRook(ChessMan(ChessManType::Rook, 'w', "a2"));
-    BOOST_CHECK(whiteRook.GetSymbol() == "wR");
-}
 BOOST_AUTO_TEST_CASE(testlEqualOperator)
 {
     ChessMan whiteRook1(ChessManType::Rook, 'w', "c2");

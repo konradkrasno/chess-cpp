@@ -467,6 +467,7 @@ void Board::MakeCastling(char const playerColor, char const rookFile, char const
     newKingPositionField = actualKingPositionField;
     newKingPositionField.ChangePosition(newKingPosition);
     newKingPositionField.ChangeFirstMove();
+    boardAttributes.kingsPositions.at(playerColor) = newKingPosition;
     actualKingPositionField = ChessMan(ChessManType::None, 0);
 
     CalculateMovesBoardAndReactionBoardWithNeutralKings();
