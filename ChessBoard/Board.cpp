@@ -202,22 +202,36 @@ bool Board::CheckMate(char const kingColor)
     }
 
     int count(0);
-    std::list<ChessMan> kingFieldReactions(boardAttributes.reactionBoard.at(kingPosition));
-    for (std::list<ChessMan>::iterator kingReactions_it = kingFieldReactions.begin(); kingReactions_it != kingFieldReactions.end(); kingReactions_it++)
+    std::list<ChessMan> reactingChessMen(boardAttributes.reactionBoard.at(kingPosition));
+    for (std::list<ChessMan>::iterator enemy_it = reactingChessMen.begin(); enemy_it != reactingChessMen.end(); enemy_it++)
     {
-        if (kingReactions_it->GetColor() != kingColor)
+        if (enemy_it->GetColor() != kingColor)
         {
             count += 1;
 
-            string checkingChessManPosition(kingReactions_it->GetPosition());
-            std::list<ChessMan> reactionsAtCheckingChessMan(boardAttributes.reactionBoard.at(checkingChessManPosition));
-            for (std::list<ChessMan>::iterator reactionsEnemy_it = reactionsAtCheckingChessMan.begin();
-                reactionsEnemy_it != reactionsAtCheckingChessMan.end();
-                reactionsEnemy_it++)
+            string enemyPosition(enemy_it->GetPosition());
+            std::list<ChessMan> defenders(boardAttributes.reactionBoard.at(enemyPosition));
+            for (std::list<ChessMan>::iterator defender_it = defenders.begin();
+                defender_it != defenders.end();
+                defender_it++)
             {
-                if (reactionsEnemy_it->GetColor() == kingColor && reactionsEnemy_it->GetType() != ChessManType::King)
+                if (defender_it->GetColor() == kingColor && defender_it->GetType() != ChessManType::King)
                 {
-                    checkingChessManNotCaptured = false;
+                    ChessMan& defender(boardAttributes.boardState.at(defender_it->GetPosition()));
+                    ChessMan const copy_defender(defender);
+                    defender = ChessMan(ChessManType::None, 0);
+
+                    ChessMan& enemy(boardAttributes.boardState.at(enemy_it->GetPosition()));
+                    ChessMan& copy_enemy(enemy);
+                    enemy = defender;
+
+                    CalculateMovesBoardAndReactionBoardWithNeutralKings();
+
+                    if (!Check(kingColor, kingPosition))
+                        checkingChessManNotCaptured = false;
+
+                    defender = copy_defender;
+                    enemy = copy_enemy;
                 }
             }
         }

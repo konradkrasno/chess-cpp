@@ -1144,6 +1144,25 @@ BOOST_FIXTURE_TEST_CASE(testCheckMateWhenTrueVariant5, EmptyBoardFixture)
 
     BOOST_CHECK(checkMate == true);
 }
+BOOST_FIXTURE_TEST_CASE(testCheckMateWhenFalseVariant6, EmptyBoardFixture)
+{
+    char playerColor = 'b';
+
+    emptyGameplay->board.boardAttributes.boardState.at("h2") = ChessMan(ChessManType::Pawn, 'w', "h2");
+    emptyGameplay->board.boardAttributes.boardState.at("f3") = ChessMan(ChessManType::Knight, 'w', "f3");
+    emptyGameplay->board.boardAttributes.boardState.at("h1") = ChessMan(ChessManType::King, 'w', "h1");
+    emptyGameplay->board.boardAttributes.kingsPositions.at('w') = "h1";
+    emptyGameplay->board.boardAttributes.kingsPositions.at('b') = "a8";
+
+    emptyGameplay->board.boardAttributes.boardState.at("g6") = ChessMan(ChessManType::Rook, 'b', "g6");
+    emptyGameplay->board.boardAttributes.boardState.at("g1") = ChessMan(ChessManType::Queen, 'b', "g1");
+    emptyGameplay->board.boardAttributes.boardState.at("d5") = ChessMan(ChessManType::Bishop, 'b', "d5");
+
+    emptyGameplay->board.CalculateMovesBoardAndReactionBoardWithNeutralKings();
+    bool checkMate(emptyGameplay->SwitchPlayerAndLookForCheckMateOrCheck(playerColor));
+
+    BOOST_CHECK(checkMate == true);
+}
 
 BOOST_FIXTURE_TEST_CASE(testCheckMateWhenFalseVariant2, EmptyBoardFixture)
 {
