@@ -7,10 +7,9 @@ using std::cin;
 
 int main()
 {
-	Gameplay gameplay;
-
 	while (true)
 	{
+		Gameplay gameplay;
 		gameplay.StartGame();
 		cout << "Would you like to play again? (Y/n): ";
 		string agree;
