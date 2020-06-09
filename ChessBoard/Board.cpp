@@ -85,24 +85,28 @@ void Board::_DrawEntirePositionLine(string fileRange, char rank) const
 
 void Board::DrawBoard(char const playerColor, bool const invertTable) const
 {
+    string file_range;
     string rank_range;
     if (invertTable)
     {
-        if (playerColor == 'w') rank_range = rankRange;
-        else rank_range = inverted_rankRange;
+        if (playerColor == 'w') file_range = fileRange;
+        else file_range = inverted_fileRange;
     }
     else
-        rank_range = rankRange;
+        file_range = fileRange;
 
     cout << "    ";
-    Board::_DrawEntireNonPositionLine(LineType::FileHeader, LineEndBegin::TopLine, fileRange);
-    Board::_DrawEntireNonPositionLine(LineType::TopHorizontalLine, LineEndBegin::TopLine, fileRange);
+    Board::_DrawEntireNonPositionLine(LineType::FileHeader, LineEndBegin::TopLine, file_range);
+    Board::_DrawEntireNonPositionLine(LineType::TopHorizontalLine, LineEndBegin::TopLine, file_range);
+
+    if (file_range == fileRange) rank_range = rankRange;
+    else rank_range = inverted_rankRange;
 
     for (char const& rank : rank_range)
     {
-        Board::_DrawEntireNonPositionLine(LineType::VerticalLines, LineEndBegin::RankHeader, fileRange, rank);
-        Board::_DrawEntirePositionLine(fileRange, rank);
-        Board::_DrawEntireNonPositionLine(LineType::VerticalAndHorizontalLines, LineEndBegin::InnerLine, fileRange);
+        Board::_DrawEntireNonPositionLine(LineType::VerticalLines, LineEndBegin::RankHeader, file_range, rank);
+        Board::_DrawEntirePositionLine(file_range, rank);
+        Board::_DrawEntireNonPositionLine(LineType::VerticalAndHorizontalLines, LineEndBegin::InnerLine, file_range);
     }
     cout << endl;
 }
