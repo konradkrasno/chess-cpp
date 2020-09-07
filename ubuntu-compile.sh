@@ -1,1 +1,0 @@
-g++ ChessBoard/chess.cpp ChessBoard/subsidiary.cpp ChessBoard/BoardAttributes.cpp ChessBoard/UpdateAttributes.cpp ChessBoard/ChessMan.cpp ChessBoard/RookMoves.cpp ChessBoard/BishopMoves.cpp ChessBoard/KnightMoves.cpp ChessBoard/QueenMoves.cpp ChessBoard/KingMoves.cpp ChessBoard/PawnMoves.cpp ChessBoard/Move.cpp ChessBoard/Board.cpp ChessBoard/Gameplay.cpp -o chess-game.exe
