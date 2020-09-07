@@ -11,7 +11,7 @@ static const std::map<char, string> players
 	{ 'b', "Black" }
 };
 
-static const bool invertTable(true);
+static const bool invertTable(false);
 
 
 Gameplay::Gameplay()

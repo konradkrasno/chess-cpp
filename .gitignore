@@ -8,3 +8,4 @@ ChessBoard/ChessBoard.vcxproj.user
 ChessBoard/Debug UnitTests/*
 Debug UnitTests/*
 ChessBoard/*.o
+ChessBoard/chess
